@@ -4,7 +4,7 @@ import axios from 'axios'
 // Em produção usa a variável de ambiente VITE_API_URL
 const BASE = import.meta.env.VITE_API_URL ?? ''
 
-const api = axios.create({ baseURL: BASE })
+export const api = axios.create({ baseURL: BASE, withCredentials: true })
 
 // Injeta o token em todas as requisições
 api.interceptors.request.use(cfg => {
@@ -17,9 +17,10 @@ api.interceptors.request.use(cfg => {
 api.interceptors.response.use(
   res => res,
   err => {
-    if (err.response?.status === 401) {
+    // Só derruba a sessão se havia token (as páginas públicas também recebem 401 em rotas fechadas)
+    if (err.response?.status === 401 && localStorage.getItem('token')) {
       localStorage.clear()
-      window.location.href = '/login'
+      window.location.href = '/entrar?expirou=1'
     }
     return Promise.reject(err)
   }
@@ -33,6 +34,12 @@ export interface LoginResponse {
   factionId:   number
   factionRole: string
   isGM:        boolean
+  /** Opcional: nível da conta no jogo (Player, Counselor, GameMaster, Seer, Administrator, Developer, Owner) */
+  accessLevel?: string
+  /** Ajustes do contrato: nível da conta e atalhos de permissão */
+  nivel?: string
+  isStaff?: boolean
+  isAdmin?: boolean
 }
 
 export interface Coins {
