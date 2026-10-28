@@ -1,3 +1,4 @@
+import ComoUsarBuild from '../components/ComoUsarBuild'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getMinhasBuilds, getRegras, usarBuild, desmarcarBuild, apagarBuild, msgErro, Build } from '../api/site'
@@ -23,6 +24,8 @@ export default function MinhasBuildsPage() {
         Marque uma build com <b>Usar no próximo personagem</b>: na criação do personagem, o jogo oferece “Usar a build escolhida no site” e preenche a ficha (avisando se algo não couber mais).
       </CabecalhoPagina>
       <div className="linha" style={{ marginBottom: 20 }}><Link to="/simulador" className="btn">Criar build</Link></div>
+      <ComoUsarBuild />
+      <div style={{ height: 20 }} />
       {msg && <div className={'aviso ' + (msg.ok ? 'aviso-ok' : 'aviso-erro')} role="status" style={{ marginBottom: 18 }}>{msg.t}</div>}
       {builds.carregando && <Carregando />}
       {builds.erro && <Erro erro={builds.erro} tentar={builds.carregar} />}

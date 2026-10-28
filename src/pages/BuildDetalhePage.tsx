@@ -1,3 +1,4 @@
+import ComoUsarBuild from '../components/ComoUsarBuild'
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getBuild, getRegras, usarBuild, apagarBuild, tornarOficial, msgErro } from '../api/site'
@@ -42,11 +43,12 @@ export default function BuildDetalhePage() {
           {b.porque && <section style={{ marginBottom: 18 }}><h3>Por que essas perícias</h3><p style={{ whiteSpace: 'pre-wrap' }}>{b.porque}</p></section>}
           <div className="linha" style={{ marginBottom: 20 }}>
             <Link className="btn btn-2" to={'/simulador?de=' + b.id}>{b.tipo === 'oficial' ? 'Começar a partir desta' : 'Abrir no simulador'}</Link>
-            {s.logado && <button className="btn" onClick={() => acao(() => usarBuild(b.id), 'Marcada: o próximo personagem desta conta poderá usar esta build.')}>Usar no próximo personagem</button>}
+            {s.logado && <button className="btn" onClick={() => acao(() => usarBuild(b.id), 'Marcada! Agora crie um personagem novo no jogo e, na primeira tela, clique em “Usar a build escolhida no site”.')}>Usar no próximo personagem</button>}
             {podeEditar && <Link className="btn btn-2" to={'/simulador/' + b.id}>Editar</Link>}
             {s.staff && <button className="btn btn-2" onClick={() => acao(() => tornarOficial(b.id, b.tipo !== 'oficial'), b.tipo === 'oficial' ? 'Voltou a ser da comunidade.' : 'Agora é oficial.')}>{b.tipo === 'oficial' ? 'Tirar selo oficial' : 'Tornar oficial'}</button>}
             {podeEditar && <button className="btn btn-perigo" onClick={() => setConfirmar(true)}>Apagar</button>}
           </div>
+          {s.logado ? <ComoUsarBuild /> : <p className="discreto">Entre com a conta do jogo para marcar esta build e usá-la na criação do seu próximo personagem.</p>}
           {msg && <div className={'aviso ' + (msg.ok ? 'aviso-ok' : 'aviso-erro')} role="status" style={{ marginBottom: 18 }}>{msg.t}</div>}
           {probs.length > 0 && <div className="aviso aviso-erro" style={{ marginBottom: 18 }}>Esta build não fecha com as regras atuais: {probs.join(' ')}</div>}
 
