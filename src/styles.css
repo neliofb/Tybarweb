@@ -123,6 +123,22 @@ small, .discreto { color: var(--texto-3); font-size: .85em; }
   .marca-nome { font-size: 19px; }
   .cab { padding: 0 12px; gap: 10px; }
 }
+/* Menu de celular: o backdrop-filter do cabeçalho prende o menu "fixed" dentro dos 64px do cabeçalho
+   (vira o bloco de referência), e o menu saía cortado/desproporcional. Sem o filtro, o menu ocupa a tela. */
+@media (max-width: 1100px) {
+  .cab { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .nav { width: min(300px, 82vw); z-index: 60; }
+  .nav .cab-conta { margin: 16px 0 0; padding-top: 16px; border-top: 1px solid var(--couro-borda); flex-direction: column; align-items: stretch; gap: 10px; }
+  .nav .cab-conta .btn { width: 100%; justify-content: center; text-align: center; font-size: 15px; padding: 12px 14px; }
+  .nav .cab-conta .cab-nome { display: block; text-align: center; padding: 6px 0; }
+}
+@media (max-width: 1560px) {
+  .cab-cheia { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .cab-cheia .nav { width: min(300px, 82vw); z-index: 60; }
+  .cab-cheia .nav .cab-conta { margin: 16px 0 0; padding-top: 16px; border-top: 1px solid var(--couro-borda); flex-direction: column; align-items: stretch; gap: 10px; }
+  .cab-cheia .nav .cab-conta .btn { width: 100%; justify-content: center; text-align: center; font-size: 15px; padding: 12px 14px; }
+  .cab-cheia .nav .cab-conta .cab-nome { display: block; text-align: center; padding: 6px 0; }
+}
 .veu { position: fixed; inset: var(--cab-h) 0 0 0; background: rgba(0, 0, 0, .5); z-index: 40; }
 
 /* ── Estrutura ─────────────────────────────────────────────── */
