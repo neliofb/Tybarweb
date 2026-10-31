@@ -25,6 +25,7 @@ No mock, "Entrar com Discord" só marca a sessão local.
 | `/criar-conta` | todos | Discord → login e senha → pedido pendente (status ao vivo) |
 | `/simulador`, `/simulador/:id` | todos (salvar: logado) | Ponto de partida (builds padrão) → povo → caminho → kit → atributos → perícias → resumo. `?de=id` começa de uma build |
 | `/builds`, `/builds/:id` | todos | Builds padrão (oficiais) e da comunidade, filtro por caminho/busca, detalhe com "Como joga" e "Por que essas perícias" |
+| `/mapa` | todos | Mapa da fauna: radar de Felucca com zoom/arrastar/pinça, camadas de biomas e zonas, toque num ponto → criaturas dali (dia/noite, perigoso, clima), filtro "onde encontro…" |
 | `/entrar` | todos | Login com a conta do jogo |
 | `/painel`, `/faccoes`, `/guerra` | logado | Páginas antigas do portal (Painel, Facções, Guerra) dentro do layout novo |
 | `/bestiario` | logado | Criaturas com números do jogo, filtros e detalhes |
@@ -32,6 +33,7 @@ No mock, "Entrar com Discord" só marca a sessão local.
 | `/minhas-builds` | logado | Criar/editar/apagar; "Usar no próximo personagem" / desmarcar |
 | `/staff/pedidos` | Counselor+ | Aprovar/recusar (com motivo) pedidos de conta |
 | `/staff/jogadores` | Administrator+ | Buscar contas, trocar senha, banir/desbanir, mudar nível (até Seer, nunca acima do próprio) |
+| `/staff/fauna` | Counselor+ | Editor de zonas da fauna: desenhar/mover/redimensionar/apagar retângulos (tiles), criatura, nível, horário, grupo, máximo, clima e ajustes de status; Salvar → `POST /api/staff/fauna/zonas` |
 | `/staff/builds` | Counselor+ | Promover/retirar builds oficiais; nova build oficial pelo simulador |
 
 ## Código
@@ -40,6 +42,8 @@ No mock, "Entrar com Discord" só marca a sessão local.
 - `src/api/site.ts`: endpoints do site e **conversão** do formato da API para o das telas (regras da ficha, builds com
   `forca/destreza/inteligencia` e tiers por nome, `/api/builds/minhas`, Discord + status do pedido, staff).
 - `src/api/mock.ts`: mocks (só com `VITE_MOCK=1`).
+- `src/api/fauna.ts`: `GET /api/fauna/mapa` e `POST /api/staff/fauna/zonas`, com `normalizarMapa` tolerante (retângulo `{x,y,largura,altura}`, `{x,y,w,h}` ou `[x,y,w,h]`; grade dos biomas `{celula, colunas, linhas, dados}` com `dados` em RLE `"id:qtd,id,..."` ou array; horário `dia|noite|sempre` ou `DayOnly|NightOnly|Always`). Mock em `src/api/mock-fauna.ts` (zonas = `.cfg` reais; grade aproximada pela cor do radar em `mock-fauna-grade.txt`).
+- `src/components/MapaFauna.tsx`: mapa navegável (1 unidade = 1 tile), camadas em canvas e um `<svg>` por cima para a página.
 - `src/ficha.ts`: custo das perícias (tabela `custos[caminho][kit]` da API), pontos, limite de Primárias, kits permitidos, problemas da build.
 - `src/auth.ts`: sessão (nível, staff, admin) a partir da resposta do `/api/login`.
 - `src/components/`: `Layout` (cabeçalho público/jogador/staff, menu lateral no celular, rodapé), `ui` (Midia com
@@ -53,6 +57,8 @@ Nomes fixos; se faltar um arquivo, a página mostra um marcador com a inicial. O
 - `povos/<povo>.jpg` (aceita `thuriao`, `zharkianos`… ) e `povos/<Povo>.mp4` (toca no simulador ao passar o mouse/escolher)
 - `caminhos/<armas|subterfugio|sabedoria>.jpg`
 - `classes/<estilo ou id da build>.jpg` (ex.: `guerreiro.jpg`, `mago_de_combate.jpg`), ou o campo `imagem` da build
+
+- `mapa/felucca_1536.webp` (55 KB, sempre), `felucca_3072.webp` (210 KB) e `felucca_6144.webp` (865 KB, 1 px por tile), carregadas conforme o zoom; `felucca_1536.jpg` de reserva. Geradas de `tools/fauna/radar_felucca.png` (PIL, LANCZOS, webp q80).
 
 ## Variáveis (.env)
 

@@ -37,6 +37,8 @@ export default function Layout() {
             <NavLink to="/codice" className={cls}>Códice</NavLink>
             <NavLink to="/simulador" className={cls}>Simulador</NavLink>
             <NavLink to="/builds" className={cls}>Builds</NavLink>
+            <NavLink to="/mapa" className={cls}>Mapa</NavLink>
+            <NavLink to="/onde-upar" className={cls}>Onde upar</NavLink>
           </div>
           {s.logado && (
             <div className="nav-grupo" aria-label="Área do jogador">
@@ -54,6 +56,7 @@ export default function Layout() {
               <NavLink to="/staff/pedidos" className={cls}>Pedidos</NavLink>
               {s.admin && <NavLink to="/staff/jogadores" className={cls}>Jogadores</NavLink>}
               <NavLink to="/staff/builds" className={cls}>Builds oficiais</NavLink>
+              <NavLink to="/staff/fauna" className={cls}>Fauna</NavLink>
             </div>
           )}
           <div className="cab-conta">

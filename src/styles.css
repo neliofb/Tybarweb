@@ -260,6 +260,9 @@ table.tabela { width: 100%; border-collapse: collapse; font-size: 16px; }
 /* ── Mídia com marcador ────────────────────────────────────── */
 .midia { position: relative; overflow: hidden; background: #120d09; }
 .midia img, .midia video { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Retratos (povos, classes, caminhos, builds): recorte puxado para cima, para o rosto não sair cortado no pescoço */
+.midia img { object-position: 50% 15%; }
+.heroi-fundo .midia img { object-position: 50% 50%; }
 .midia-marcador {
   position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
   background:
@@ -436,3 +439,77 @@ table.tabela { width: 100%; border-collapse: collapse; font-size: 16px; }
 .nav a.btn:hover { background: linear-gradient(180deg, #f0d38a 0%, #c8a24b 45%, #8a6a2a 100%); }
 .nav a.btn-2, .nav a.btn-2:hover { color: var(--ouro-claro); background: linear-gradient(180deg, #3a2a1b, #22180f); }
 .pergaminho tr.grupo th { font-family: var(--fonte-titulo); color: #6a3a10; background: rgba(110, 70, 20, .1); }
+
+/* ── Mapa da fauna (/mapa e /staff/fauna) ─────────────────────── */
+.mapa-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+.mapa-layout-staff { grid-template-columns: minmax(0, 1fr) 400px; }
+@media (max-width: 1000px) { .mapa-layout, .mapa-layout-staff { grid-template-columns: minmax(0, 1fr); } }
+.mapa-fauna { position: relative; height: min(70vh, 720px); min-height: 320px; }
+.mapa-caixa {
+  position: absolute; inset: 0; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;
+  background: #050a12; border: 1px solid var(--couro-borda); border-radius: var(--raio);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, .8), var(--sombra);
+}
+.mapa-caixa:focus-visible { outline: 2px solid var(--ouro-claro); outline-offset: 2px; }
+.mapa-caixa img, .mapa-caixa canvas { pointer-events: none; max-width: none; }
+.mapa-coord {
+  position: absolute; left: 8px; bottom: 8px; padding: 2px 8px; border-radius: 4px; pointer-events: none;
+  background: rgba(16, 12, 9, .85); border: 1px solid var(--couro-borda); color: var(--ouro-claro);
+  font-family: var(--fonte-titulo); font-size: 12px; letter-spacing: .06em; font-variant-numeric: tabular-nums;
+}
+.mapa-zoom { position: absolute; right: 8px; top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.mapa-zoom .btn { min-width: 34px; font-size: 16px; padding: 4px 0; }
+.mapa-lateral { display: flex; flex-direction: column; gap: 14px; }
+.ponto-cor { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 8px; vertical-align: -1px; border: 1px solid rgba(0, 0, 0, .6); flex: none; }
+.legenda { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 16px; }
+.lista-fauna { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.lista-fauna li { display: flex; flex-direction: column; gap: 3px; padding-bottom: 8px; border-bottom: 1px solid rgba(92, 68, 41, .4); }
+.lista-fauna li:last-child { border-bottom: 0; }
+.lista-zonas { list-style: none; max-height: 280px; overflow: auto; display: flex; flex-direction: column; gap: 2px; }
+.lista-zonas button {
+  width: 100%; display: flex; align-items: center; gap: 4px; text-align: left; cursor: pointer;
+  background: transparent; border: 1px solid transparent; border-radius: 4px; padding: 5px 8px; color: var(--texto); font: inherit; font-size: 16px;
+}
+.lista-zonas button:hover { background: rgba(200, 162, 75, .08); }
+.lista-zonas button[aria-pressed="true"] { background: rgba(200, 162, 75, .16); border-color: var(--ouro-escuro); color: var(--ouro-claro); }
+.lista-zonas small { color: var(--texto-3); }
+.form-zona { display: flex; flex-direction: column; gap: 8px; }
+.grade-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.campo-fauna { display: flex; flex-direction: column; gap: 2px; font-size: 14px; color: var(--texto-2); min-width: 0; }
+.campo-fauna.largo, .grade-campos .largo { grid-column: 1 / -1; }
+.campo-fauna .entrada { padding: 6px 8px; font-size: 16px; width: 100%; }
+.ajustes { border: 1px solid var(--couro-borda); border-radius: var(--raio); padding: 8px 10px 10px; }
+.ajustes legend { font-family: var(--fonte-titulo); color: var(--ouro); font-size: 13px; padding: 0 6px; letter-spacing: .05em; }
+.lista-rets { display: flex; flex-direction: column; gap: 4px; max-height: 260px; overflow: auto; }
+.ret-linha { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: 4px; align-items: center; padding: 2px; border-radius: 4px; }
+.ret-linha.ativo { background: rgba(200, 162, 75, .14); }
+.ret-linha .entrada { padding: 4px 6px; font-size: 14px; width: 100%; }
+.mapa-layout-staff .mapa-fauna { height: min(72vh, 760px); }
+@media (max-width: 600px) {
+  .mapa-fauna, .mapa-layout-staff .mapa-fauna { height: min(62vh, 92vw); }
+  .legenda { grid-template-columns: 1fr; }
+}
+
+/* ── Lista de camadas com caixas de seleção (mapa da fauna) ── */
+.lista-marcavel ul { list-style: none; margin: 0; padding: 0; max-height: 260px; overflow-y: auto; }
+.lista-marcavel li { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-radius: 4px; }
+.lista-marcavel li.ativo { background: rgba(200, 162, 75, .14); }
+.lista-marcavel input[type=checkbox] { accent-color: var(--ouro); width: 18px; height: 18px; flex: none; }
+.lm-nome { flex: 1; text-align: left; text-decoration: none !important; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lm-titulo { font-family: var(--fonte-titulo); color: var(--ouro-claro); font-weight: 600; }
+.ferramentas-pintura { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.ferramentas-pintura input[type=range] { accent-color: var(--ouro); width: 140px; }
+/* ── Onde upar ── */
+.abas-mapa { display: flex; gap: 4px; border-bottom: 1px solid var(--couro-borda); margin-bottom: 14px; }
+.abas-mapa button { background: none; border: 0; border-bottom: 3px solid transparent; color: var(--texto-2, #bba); font-family: var(--fonte-titulo); font-size: 16px; padding: 10px 16px; cursor: pointer; }
+.abas-mapa button[aria-selected=true] { color: var(--ouro-claro); border-bottom-color: var(--ouro); }
+.legenda-faixas { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; list-style: none; padding: 0; margin: 0; }
+.legenda-faixas li { display: flex; align-items: center; gap: 8px; }
+.legenda-faixas .amostra { width: 22px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,.5); flex: none; }
+.meu-nivel { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.meu-nivel input[type=range] { accent-color: var(--ouro); flex: 1; min-width: 140px; }
+.meu-nivel .valor { font-family: var(--fonte-titulo); font-size: 28px; color: var(--ouro-claro); min-width: 2ch; text-align: center; }
+.faixa-grande { font-family: var(--fonte-titulo); font-size: 30px; line-height: 1.1; }
+.lista-faixas { list-style: none; margin: 0; padding: 0; }
+.lista-faixas li button { display: flex; width: 100%; gap: 8px; align-items: center; background: none; border: 0; color: inherit; padding: 6px; border-radius: 4px; cursor: pointer; text-align: left; font: inherit; }
+.lista-faixas li button:hover, .lista-faixas li button[aria-pressed=true] { background: rgba(200, 162, 75, .12); }

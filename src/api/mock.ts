@@ -5,6 +5,7 @@ import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { api } from './client'
 import type { Regras, Build, PedidoConta, ContaStaff, Pericia, CapituloResumo } from './site'
 import bestiario from './mock-bestiario.json'
+import { mapaFauna, salvarZonasMock } from './mock-fauna'
 import receitas from '../../../tools/oficios/receitas.json'
 
 // ── Códice: lê os .txt reais e converte de forma simples (o servidor fará a conversão de verdade) ──
@@ -258,6 +259,20 @@ rota('get', '/api/oficios', () => logado() ? ok(receitas) : falha(401, 'Entre na
 
 const staff = () => ['admin', 'gm'].includes(usuario)
 const admin = () => usuario === 'admin'
+rota('get', '/api/fauna/mapa', () => ok(mapaFauna(logado() && staff())))
+rota('post', '/api/staff/fauna/zonas', (_m, b) => staff() ? salvarZonasMock(b) : falha(403, 'Só staff.'))
+let niveisMock: any[] = [
+  { id: 'r1', nome: 'Arredores de Zharkia', periciaMin: 0, periciaMax: 20, cor: '#4caf50', retangulos: [{ x: 2700, y: 1150, largura: 420, altura: 330 }] },
+  { id: 'r2', nome: 'Estreito', periciaMin: 20, periciaMax: 40, cor: '#4caf50', retangulos: [{ x: 2675, y: 900, largura: 520, altura: 260 }] },
+  { id: 'r3', nome: 'Floresta Numaja', periciaMin: 50, periciaMax: 80, cor: '#d4c43a', retangulos: [{ x: 1500, y: 1700, largura: 700, altura: 500 }] },
+  { id: 'r4', nome: 'Terras dos Orcs', periciaMin: 90, periciaMax: 120, cor: '#d23c3c', retangulos: [{ x: 4300, y: 600, largura: 600, altura: 450 }] },
+]
+rota('get', '/api/fauna/niveis', () => ok(niveisMock))
+rota('post', '/api/staff/fauna/niveis', (_m, b: any) => {
+  if (!staff()) return falha(403, 'Só staff.')
+  niveisMock = (b?.regioes ?? []).map((r: any, i: number) => ({ ...r, id: r.id ?? 'r' + (100 + i) }))
+  return ok({ ok: true, regioes: niveisMock })
+})
 rota('get', '/api/staff/pedidos', () => staff() ? ok(pedidos) : falha(403, 'Só staff.'))
 rota('post', '/api/staff/pedidos/([^/]+)/aprovar', m => {
   const p = pedidos.find(x => x.id === m[1]); if (!p) return falha(404, 'Pedido não encontrado.')
