@@ -104,17 +104,17 @@ const kits = [
   { id: 'Genio', nome: 'Gênio', descricao: '+Inteligência; aprende mais rápido as perícias arcanas.' },
   { id: 'SabeTudo', nome: 'Sabe-Tudo', descricao: '+5 pontos de perícia na criação; menos atributos.', pontosExtras: 5 },
   { id: 'Ranger', nome: 'Ranger', descricao: 'Mateiro: Survival, Sneak, Tactics e Handle Animal mais baratos.', caminhos: ['Armas', 'Subterfugio'] },
-  { id: 'Berserker', nome: 'Berserker', descricao: 'Fúria em combate: mais dano quando ferido.', caminhos: ['Armas'] },
-  { id: 'GuerreiroSanto', nome: 'Guerreiro Santo', descricao: 'Magery e Medicine custam 1. Orações do Panteão em armadura.', caminhos: ['Armas'] },
+  { id: 'Berserker', nome: 'Berserker', descricao: 'Elite thuriã, muitos da guarnição da Muralha Norte. Fúria em combate: mais dano quando ferido.', caminhos: ['Armas'], povos: ['Thuriano'] },
+  { id: 'GuerreiroSanto', nome: 'Guerreiro Santo', descricao: 'Magery e Medicine custam 1. Orações do Panteão em armadura.', caminhos: ['Armas'], povos: ['Zharkiano', 'Asanita'] },
   { id: 'MagoDeCombate', nome: 'Mago de Combate', descricao: 'Magic Lore substitui Tactics nos golpes.', caminhos: ['Sabedoria'] },
-  { id: 'AcolitoDoPanteao', nome: 'Acólito do Panteão', descricao: 'Libera as Orações; árvore de talentos própria.', caminhos: ['Sabedoria'] },
+  { id: 'AcolitoDoPanteao', nome: 'Acólito do Panteão', descricao: 'Criado no Templo dos cinco deuses do Panteão, Asan incluído. Libera as Orações; árvore de talentos própria.', caminhos: ['Sabedoria'], povos: ['Zharkiano', 'Asanita'] },
   { id: 'Mesumbeiro', nome: 'Mesumbeiro', descricao: 'Ritos de sangue de Mesum.', caminhos: ['Sabedoria'], povos: ['Asanita', 'Zharkiano'] },
   { id: 'Shimoriano', nome: 'Shimoriano', descricao: 'Mesum com Magery, tradição de Shimor.', caminhos: ['Sabedoria'] },
   { id: 'Totemista', nome: 'Totemista', descricao: 'Totens de Numaja.', caminhos: ['Sabedoria'], povos: ['Numajene'] },
   { id: 'LadinoTreinado', nome: 'Ladino Treinado', descricao: 'Mãos leves e olhos atentos.', caminhos: ['Subterfugio'] },
   { id: 'Artifice', nome: 'Artífice', descricao: 'Todo ofício custa 1; o núcleo do caminho custa +1.' },
   { id: 'Coletor', nome: 'Coletor', descricao: 'Coleta e ofícios custam 1; Survival custa 2.' },
-  { id: 'MembroDaNobreza', nome: 'Membro da Nobreza', descricao: 'Vassalo de uma casa; moradia barata na cidadela.', povos: ['Zharkiano'] },
+  { id: 'MembroDaNobreza', nome: 'Membro da Nobreza', descricao: 'Vassalo de uma casa do reino (Rothenien, Zanshirden, Khumarin, Hyvithorian, Asanien); o Thurião é de uma família de sangue do Clã Skaldgard (Skjold, Krag, Vinter, Eisen).', povos: ['Zharkiano', 'Asanita', 'Thuriano'] },
   { id: 'MarcadoDaRaiz', nome: 'Marcado da Raiz', descricao: 'Numajene que cumpriu a Dívida de Raiz.', povos: ['Numajene'] },
 ]
 for (const k of kits as any[]) {
@@ -130,10 +130,10 @@ for (const c of caminhos) {
 }
 const regras: Regras = {
   povos: [
-    { id: 'Thuriano', nome: 'Thurião', grupo: 'Humanos', descricao: 'Homens do norte, acostumados ao frio e às adversidades. Valorizam a força, a coragem e a honra.', vantagem: 'Resistência maior ao clima frio.' },
+    { id: 'Thuriano', nome: 'Thurião', grupo: 'Humanos', descricao: 'Sobreviventes da queda de Thuria para os dragões; ergueram o Grande Clã Skaldgard no extremo norte e guardam a Muralha Norte ao lado dos Rothenien.', vantagem: 'Resistência maior ao clima frio.' },
     { id: 'Zharkiano', nome: 'Zharkiano', grupo: 'Humanos', descricao: 'Senhores do mundo, ambiciosos e determinados. Valorizam o poder, a riqueza e a influência.', vantagem: 'Gravemente ferido, você tem uma segunda chance em testes de resistência.' },
-    { id: 'Asanita', nome: 'Asanita', grupo: 'Humanos', descricao: 'Escondidos nas cidades humanas, mestres do disfarce e da adaptação.', vantagem: 'Você possui 1 Ponto de Morte a mais.' },
-    { id: 'Aquilrano', nome: 'Aquilrano', grupo: 'Élficos', descricao: 'Senhores do deserto, adaptados ao calor extremo.', vantagem: 'Resistência maior ao calor do deserto.' },
+    { id: 'Asanita', nome: 'Asanita', grupo: 'Humanos', descricao: 'Descendentes dos fiéis de Asan, hoje reintegrado ao Panteão. Governados pela Casa Asanien na Cidadela de Asan, servem ao Trono.', vantagem: 'Você possui 1 Ponto de Morte a mais.' },
+    { id: 'Aquilrano', nome: 'Aquilrano', grupo: 'Élficos', descricao: 'Senhores do deserto, adaptados ao calor extremo.', vantagem: 'Resistência maior ao calor do deserto.', disponivel: false },
     { id: 'Vanirio', nome: 'Vanírio', grupo: 'Élficos', descricao: 'Altos elfos e sábios, mestres da magia e da navegação.', vantagem: 'Periodicamente, uma falha em teste de perícia vira sucesso.' },
     { id: 'Numajene', nome: 'Numajene', grupo: 'Élficos', descricao: 'Habitantes das florestas densas, conectados à natureza.', vantagem: 'Você anda em Numaja sem ser importunado pela floresta.' },
   ],
@@ -174,7 +174,7 @@ const builds: Build[] = [
   { id: 'b2', nome: 'Clérigo do Panteão', tipo: 'oficial', autor: 'Staff', estilo: 'Clérigo', imagem: 'classes/clerigo.jpg', povo: 'Zharkiano', caminho: 'Sabedoria', kit: 'AcolitoDoPanteao', atributos: { str: 50, dex: 50, int: 90 }, pericias: { Magery: 3, MagicLore: 3, Medicine: 3, Alchemy: 2, Parry: 1 }, descricao: 'Cura, proteção e bênçãos. O motivo de o grupo voltar vivo.', criadaEm: '2026-10-20' },
   { id: 'b3', nome: 'Ranger das Fronteiras', tipo: 'oficial', autor: 'Staff', estilo: 'Ranger', povo: 'Numajene', caminho: 'Subterfugio', kit: 'Ranger', atributos: { str: 60, dex: 90, int: 50 }, pericias: { RangedCombat: 3, Survival: 3, Sneak: 2, HandleAnimal: 2, Tactics: 2 }, descricao: 'Arco, armadilha e um lobo fiel.', criadaEm: '2026-10-21' },
   { id: 'b4', nome: 'Mesumbeiro de Sangue', tipo: 'oficial', autor: 'Staff', estilo: 'Mesumbeiro', povo: 'Asanita', caminho: 'Sabedoria', kit: 'Mesumbeiro', atributos: { str: 70, dex: 50, int: 80 }, pericias: { Magery: 3, MagicLore: 3, Medicine: 2, Awareness: 1 }, descricao: 'Poder pago com a própria vida.', criadaEm: '2026-10-25' },
-  { id: 'b5', nome: 'Lâmina do Deserto', tipo: 'comunidade', autor: 'Kaelthar', estilo: 'Berserker de duas mãos', povo: 'Aquilrano', caminho: 'Armas', kit: 'Berserker', atributos: { str: 90, dex: 80, int: 30 }, pericias: { MeleeCombat2H: 3, Tactics: 3, Wrestling: 2, Survival: 2, Medicine: 1 }, descricao: 'Montante e nenhuma piedade.', criadaEm: '2026-10-26' },
+  { id: 'b5', nome: 'Lâmina do Deserto', tipo: 'comunidade', autor: 'Kaelthar', estilo: 'Berserker de duas mãos', povo: 'Thuriano', caminho: 'Armas', kit: 'Berserker', atributos: { str: 90, dex: 80, int: 30 }, pericias: { MeleeCombat2H: 3, Tactics: 3, Wrestling: 2, Survival: 2, Medicine: 1 }, descricao: 'Montante e nenhuma piedade.', criadaEm: '2026-10-26' },
   { id: 'b6', nome: 'Ferreiro de Vila', tipo: 'comunidade', autor: 'Bruna', estilo: 'Ferreiro guerreiro', povo: 'Thuriano', caminho: 'Armas', kit: 'Artifice', atributos: { str: 90, dex: 60, int: 50 }, pericias: { Metalworking: 3, Gathering: 3, MeleeCombat1H: 2, Parry: 2, Tactics: 1 }, descricao: 'Forja de dia, defende a vila à noite.', criadaEm: '2026-10-27', minha: true },
 ]
 const pedidos: PedidoConta[] = [

@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react'
 import { getFaixasNivel, FaixaNivel, MapaFauna as Mapa, LEGENDA_FAIXAS, PERICIA_MAX, faixaEm, ROTULO_HORARIO, Horario } from '../api/fauna'
 import MapaFauna from '../components/MapaFauna'
+import { useSessao } from '../auth'
 import { Carregando, Erro, useDados } from '../components/ui'
-
 type Avaliacao = { rotulo: string; classe: string; peso: number }
 // perícia 0 = "não escolhi" (o controle começa em —); quem tem 0 de verdade escolhe 1
 function avaliar(f: FaixaNivel, nivel: number): Avaliacao {
@@ -45,7 +45,9 @@ export default function OndeUpar({ mapa }: { mapa: Mapa }) {
   const [nivel, setNivel] = useState(0)
   const [sel, setSel] = useState<string | null>(null)
   const faixa = faixas.find(f => f.id === sel) ?? null
-  const criaturas = useMemo(() => (faixa ? criaturasDa(mapa, faixa) : []), [mapa, faixa])
+  // a lista de criaturas da região é só da staff; o público vê apenas a faixa
+  const { staff } = useSessao()
+  const criaturas = useMemo(() => (faixa && staff ? criaturasDa(mapa, faixa) : []), [mapa, faixa, staff])
   const ordenadas = useMemo(() => [...faixas].sort((a, b) => {
     const pa = avaliar(a, nivel).peso, pb = avaliar(b, nivel).peso
     return pb - pa || a.min - b.min
@@ -107,7 +109,7 @@ export default function OndeUpar({ mapa }: { mapa: Mapa }) {
           {!faixa ? (
             <>
               <h3>Toque numa região</h3>
-              <p className="texto-2">Veja a faixa de nível dos monstros e as criaturas que aparecem por lá.</p>
+              <p className="texto-2">{staff ? 'Veja a faixa de perícia e as criaturas que aparecem por lá.' : 'Veja para qual perícia de combate a região é indicada.'}</p>
             </>
           ) : (
             <>
@@ -115,7 +117,7 @@ export default function OndeUpar({ mapa }: { mapa: Mapa }) {
               <div className="faixa-grande" style={{ color: faixa.cor }}>Perícia {faixa.min}–{faixa.max}</div>
               {nivel > 0 && <span className={'selo ' + avaliar(faixa, nivel).classe} style={{ marginTop: 6 }}>{avaliar(faixa, nivel).rotulo}</span>}
               <p className="discreto" style={{ margin: '8px 0' }}>Região para quem tem perícia de combate entre {faixa.min} e {faixa.max}: os monstros que nascem aqui lutam nesse patamar, então você acerta cerca de metade dos golpes e ainda aprende. Sozinho, cada um leva uns 30 s; dois ou três juntos são perigosos. Animais comuns não mudam.</p>
-              <h4>Criaturas por aqui</h4>
+              {staff && <><h4>Criaturas por aqui (staff)</h4>
               {criaturas.length === 0 ? <p className="texto-2">Nenhuma criatura conhecida nesta região.</p> : (
                 <ul className="lista-fauna">
                   {criaturas.map(c => (
@@ -128,7 +130,7 @@ export default function OndeUpar({ mapa }: { mapa: Mapa }) {
                     </li>
                   ))}
                 </ul>
-              )}
+              )}</>}
             </>
           )}
         </section>

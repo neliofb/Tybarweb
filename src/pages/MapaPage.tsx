@@ -4,6 +4,7 @@ import { getMapaFauna, biomaEm, zonasEm, ROTULO_HORARIO, Aparicao, Horario } fro
 import MapaFauna, { corDoTipo, ListaMarcavel } from '../components/MapaFauna'
 import OndeUpar from './OndeUpar'
 import { CabecalhoPagina, Carregando, Erro, useDados, useTitulo } from '../components/ui'
+import { useSessao } from '../auth'
 
 interface Item { tipo: string; nome: string; horarios: Set<Horario>; perigoso: boolean; climas: Set<string> }
 
@@ -24,7 +25,9 @@ function textoHorario(h: Set<Horario>) {
 
 export default function MapaPage({ abaInicial }: { abaInicial?: 'criaturas' | 'upar' }) {
   const [busca, setBusca] = useSearchParams()
-  const aba = (busca.get('aba') as 'criaturas' | 'upar' | null) ?? abaInicial ?? 'criaturas'
+  // a visão de criaturas é só da staff: o público vê apenas "Onde upar"
+  const { staff } = useSessao()
+  const aba = staff ? ((busca.get('aba') as 'criaturas' | 'upar' | null) ?? abaInicial ?? 'criaturas') : 'upar'
   useTitulo(aba === 'upar' ? 'Onde upar' : 'Mapa da fauna')
   const d = useDados(getMapaFauna)
   const m = d.dados
@@ -53,9 +56,9 @@ export default function MapaPage({ abaInicial }: { abaInicial?: 'criaturas' | 'u
   const nomeFiltro = m?.criaturas.find(c => c.tipo === filtro)?.nome
   // escolher uma criatura marca os biomas e zonas onde ela vive
   useEffect(() => { if (destaque) { setVisBiomas(new Set(destaque.biomas)); setVisZonas(new Set(destaque.zonas)) } }, [destaque])
-  const abas = (
+  const abas = staff && (
     <div className="abas-mapa" role="tablist" aria-label="Mapa">
-      <button role="tab" aria-selected={aba === 'criaturas'} onClick={() => setBusca({})}>Criaturas</button>
+      <button role="tab" aria-selected={aba === 'criaturas'} onClick={() => setBusca({})}>Criaturas (staff)</button>
       <button role="tab" aria-selected={aba === 'upar'} onClick={() => setBusca({ aba: 'upar' })}>Onde upar</button>
     </div>
   )

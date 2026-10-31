@@ -15,6 +15,9 @@ const BestiarioPage = lazy(() => import('./pages/BestiarioPage'))
 const OficiosPage = lazy(() => import('./pages/OficiosPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const FactionsPage = lazy(() => import('./pages/FactionsPage'))
+const FaccoesLorePage = lazy(() => import('./pages/FaccoesLorePage'))
+const FaccaoPage = lazy(() => import('./pages/FaccaoPage'))
+const LoreSituacaoPage = lazy(() => import('./pages/LoreSituacaoPage'))
 const WarPage = lazy(() => import('./pages/WarPage'))
 const PedidosPage = lazy(() => import('./pages/staff/PedidosPage'))
 const JogadoresPage = lazy(() => import('./pages/staff/JogadoresPage'))
@@ -44,9 +47,14 @@ export default function App() {
             <Route path="builds/:id" element={<BuildDetalhePage />} />
             <Route path="mapa" element={<MapaPage />} />
             <Route path="onde-upar" element={<Navigate to="/mapa?aba=upar" replace />} />
+            {/* lore: facções e situação atual dos povos (texto final do Homebrewery, em src/data/faccoes.ts) */}
+            <Route path="faccoes" element={<FaccoesLorePage />} />
+            <Route path="faccoes/:id" element={<FaccaoPage />} />
+            <Route path="lore" element={<Navigate to="/faccoes" replace />} />
+            <Route path="lore/:id" element={<LoreSituacaoPage />} />
 
             <Route path="painel" element={<SoLogado><Antiga><DashboardPage /></Antiga></SoLogado>} />
-            <Route path="faccoes" element={<SoLogado><Antiga><FactionsPage /></Antiga></SoLogado>} />
+            <Route path="faccoes-em-jogo" element={<SoLogado><Antiga><FactionsPage /></Antiga></SoLogado>} />
             <Route path="guerra" element={<SoLogado><Antiga><WarPage /></Antiga></SoLogado>} />
             <Route path="bestiario" element={<SoLogado><BestiarioPage /></SoLogado>} />
             <Route path="oficios" element={<SoLogado><OficiosPage /></SoLogado>} />
@@ -59,7 +67,7 @@ export default function App() {
 
             {/* endereços antigos do portal */}
             <Route path="dashboard" element={<Navigate to="/painel" replace />} />
-            <Route path="factions" element={<Navigate to="/faccoes" replace />} />
+            <Route path="factions" element={<Navigate to="/faccoes-em-jogo" replace />} />
             <Route path="war" element={<Navigate to="/guerra" replace />} />
             <Route path="*" element={<div className="pagina"><h1>Página perdida</h1><p className="texto-2">Nenhum mapa leva até aqui.</p></div>} />
           </Route>

@@ -15,7 +15,7 @@ export const getCodice = () => api.get<CapituloResumo[]>('/api/codice')
 export const getCapitulo = (id: string) => api.get<Capitulo>('/api/codice/' + enc(id))
 
 // ── Ficha / simulador ───────────────────────────────────────────────
-export interface Povo { id: string; nome: string; grupo?: string; descricao: string; vantagem?: string }
+export interface Povo { id: string; nome: string; grupo?: string; descricao: string; vantagem?: string; /** false = aparece, mas não entra em criação nova (Aquilrano, por enquanto) */ disponivel?: boolean }
 export interface Vantagem { id: string; nome: string; descricao: string; povos?: string[]; pontosExtras?: number }
 export interface Caminho { id: string; nome: string; descricao: string }
 export interface Kit {
@@ -53,7 +53,7 @@ interface RegrasApi {
   atributos?: { base: number; min: number; max: number; pontos: number }
   pericias_pontos?: { base: number; sabeTudo?: number; versatilidade?: number; primariasMax?: number; primariasMaxSabeTudo?: number }
   tiers?: { id: string; nome: string; multiplicador: number; inicio?: number; teto?: number }[]
-  povos: { id: string; nome: string; raca?: string; descricao: string; vantagemDoPovo?: string; grupo?: string; vantagem?: string }[]
+  povos: { id: string; nome: string; raca?: string; descricao: string; vantagemDoPovo?: string; grupo?: string; vantagem?: string; disponivel?: boolean }[]
   vantagens?: { id: string; nome: string; raca?: string; descricao: string; povos?: string[]; pontosExtras?: number }[]
   caminhos: Caminho[]
   kits: Kit[]
@@ -67,7 +67,7 @@ export function normalizarRegras(a: RegrasApi): Regras {
   const pp = a.pericias_pontos ?? { base: 22 }
   const raca = (id: string) => a.povos.find(p => p.id === id)?.raca
   return {
-    povos: a.povos.map(p => ({ id: p.id, nome: p.nome, grupo: p.grupo ?? p.raca, descricao: p.descricao, vantagem: p.vantagem ?? p.vantagemDoPovo })),
+    povos: a.povos.map(p => ({ id: p.id, nome: p.nome, grupo: p.grupo ?? p.raca, descricao: p.descricao, vantagem: p.vantagem ?? p.vantagemDoPovo, disponivel: p.disponivel !== false })),
     vantagens: (a.vantagens ?? []).map(v => ({
       id: v.id, nome: v.nome, descricao: v.descricao,
       povos: v.povos ?? (v.raca ? a.povos.filter(p => raca(p.id) === v.raca).map(p => p.id) : undefined),

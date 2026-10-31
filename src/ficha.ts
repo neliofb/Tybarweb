@@ -67,6 +67,7 @@ export interface Problema { texto: string }
 export function problemas(r: Regras, b: Partial<Build>): string[] {
   const out: string[] = []
   if (!b.povo) out.push('Escolha um povo.')
+  else if (r.povos.find(p => p.id === b.povo)?.disponivel === false) out.push(`O povo ${nomeDe(r.povos, b.povo)} está indisponível para criação por enquanto.`)
   if (!b.caminho) out.push('Escolha um caminho.')
   const k = r.kits.find(x => x.id === b.kit)
   if (k && !kitPermitido(k, b.povo, b.caminho)) out.push(`O kit ${k.nome} não serve para esse povo ou caminho.`)

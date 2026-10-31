@@ -179,7 +179,11 @@ export default function SimuladorPage() {
                   {g && <h3 style={{ marginBottom: 10 }}>{g}</h3>}
                   <div className="escolha">
                     {r.povos.filter(p => (p.grupo ?? '') === g).map(p => (
-                      <Opcao key={p.id} ativo={b.povo === p.id} onClick={() => muda({ povo: p.id, vantagem: undefined })} titulo={p.nome} texto={p.descricao} fontes={fontesPovo(p.id)} video={videoPovo(p.id)} />
+                      p.disponivel === false
+                        ? <div key={p.id} style={{ opacity: 0.4, filter: 'grayscale(1)', pointerEvents: 'none' }} aria-disabled="true" title="Indisponível para criação por enquanto.">
+                            <Opcao ativo={false} onClick={() => {}} desab titulo={p.nome} texto={'Indisponível para criação por enquanto. ' + p.descricao} fontes={fontesPovo(p.id)} />
+                          </div>
+                        : <Opcao key={p.id} ativo={b.povo === p.id} onClick={() => muda({ povo: p.id, vantagem: undefined })} titulo={p.nome} texto={p.descricao} fontes={fontesPovo(p.id)} video={videoPovo(p.id)} />
                     ))}
                   </div>
                 </div>

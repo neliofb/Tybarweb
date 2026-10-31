@@ -37,14 +37,14 @@ export default function Layout() {
             <NavLink to="/codice" className={cls}>Códice</NavLink>
             <NavLink to="/simulador" className={cls}>Simulador</NavLink>
             <NavLink to="/builds" className={cls}>Builds</NavLink>
-            <NavLink to="/mapa" className={cls}>Mapa</NavLink>
-            <NavLink to="/onde-upar" className={cls}>Onde upar</NavLink>
+            <NavLink to="/faccoes" className={cls}>Facções</NavLink>
+            <NavLink to="/mapa" className={cls}>Onde upar</NavLink>
           </div>
           {s.logado && (
             <div className="nav-grupo" aria-label="Área do jogador">
               <span className="nav-rotulo">Jogador</span>
               <NavLink to="/guerra" className={cls}>Guerra</NavLink>
-              <NavLink to="/faccoes" className={cls}>Facções</NavLink>
+              <NavLink to="/faccoes-em-jogo" className={cls}>Facções em jogo</NavLink>
               <NavLink to="/bestiario" className={cls}>Bestiário</NavLink>
               <NavLink to="/oficios" className={cls}>Ofícios</NavLink>
               <NavLink to="/minhas-builds" className={cls}>Minhas builds</NavLink>
@@ -57,6 +57,7 @@ export default function Layout() {
               {s.admin && <NavLink to="/staff/jogadores" className={cls}>Jogadores</NavLink>}
               <NavLink to="/staff/builds" className={cls}>Builds oficiais</NavLink>
               <NavLink to="/staff/fauna" className={cls}>Fauna</NavLink>
+              <NavLink to="/mapa?aba=criaturas" className={() => ""}>Mapa de criaturas</NavLink>
             </div>
           )}
           <div className="cab-conta">
@@ -81,6 +82,7 @@ export default function Layout() {
       <footer className="rodape">
         <div style={{ marginBottom: 8 }}>
           <Link to="/codice">Códice</Link>·
+          <Link to="/faccoes">Facções</Link>·
           <a href={DISCORD} target="_blank" rel="noreferrer">Discord</a>·
           {LAUNCHER && <><a href={LAUNCHER}>Baixar o launcher</a>·</>}
           <Link to="/simulador">Simulador</Link>
