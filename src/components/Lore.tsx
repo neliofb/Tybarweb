@@ -52,7 +52,7 @@ export function Blocos({ blocos }: { blocos: Bloco[] }) {
           <article key={j} className="lore-pessoa">
             <h4>{p.nome}</h4>
             {p.titulo && <div className="lore-pessoa-titulo">{p.titulo}</div>}
-            <p><Txt t={p.texto} /></p>
+            {p.texto.split('\n').map((l, k) => <p key={k}><Txt t={l} /></p>)}
           </article>
         ))}
       </div>,

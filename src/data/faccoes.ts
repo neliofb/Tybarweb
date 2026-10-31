@@ -693,6 +693,8 @@ export const FACCOES: Faccao[] = [
      }
     ]
    },
+   {"titulo": "O Panteão de Zhark", "blocos": [{"t": "p", "texto": "Cinco fragmentos do mesmo Deus, divididos e unidos pelo **Pacto Divino**. Cada um tem sua casa nobre, seu templo e seu tipo de fiel."}, {"t": "pessoa", "nome": "Zanshir", "titulo": "Deus da Coragem", "texto": "**Símbolo:** a Lança Erguida diante do sol nascente.\n**Virtudes:** bravura, palavra empenhada, enfrentar o perigo de frente.\n**Culto:** votos feitos de pé, com a arma na mão, antes da batalha ou da viagem.\n**Rito principal:** a **Vigília das Lanças**, na data da fundação de Ahenson: a noite inteira em armas, sem fogo.\n**Quem o procura:** soldados, batedores, exploradores e os que juraram defender o Reino.\n**Casa Zanshirden:** deu o primeiro Deus-Rei, Ahenson, e abdicou de bom grado. Vive do orgulho antigo e manda filhos para todas as fronteiras."}, {"t": "pessoa", "nome": "Hyvitorn", "titulo": "Deus da Usura", "texto": "**Símbolo:** o Martelo sobre a Moeda.\n**Virtudes:** engenho, trabalho, progresso, contrato cumprido.\n**Culto:** a primeira peça de cada oficina e a primeira moeda de cada mês vão ao altar; navios novos são bentos no cais.\n**Rito principal:** a **Feira das Primícias**, quando as guildas expõem diante do templo a melhor obra do ano.\n**Quem o procura:** artesãos, mercadores, armadores e devedores.\n**Casa Hyvithorian:** reinou depois de Zanshir e deu a Ahenson seus artesãos e navios. Ainda carrega a mancha do exílio dos seguidores do último rei antes de Kristine."}, {"t": "pessoa", "nome": "Asan", "titulo": "Deus da Morte, da Redenção e do Recomeço", "texto": "**Símbolo:** a Vela Reacesa: chama nova sobre um pavio queimado.\n**Virtudes:** arrependimento, aceitação do fim, coragem de recomeçar.\n**Culto:** confissões em voz baixa, vigílias junto aos moribundos e ritos fúnebres.\n**Rito principal:** a **Noite das Velas Reacesas**, em memória da revelação de 281: cada fiel apaga a vela do ano velho e acende outra com a chama do vizinho.\n**Quem o procura:** moribundos, enlutados, arrependidos, condenados e asanitas leais.\n**Casa Asanien:** outrora os Ássios, hoje leais ao Trono. Revitaliza a Cidadela de Asan sobre as ruínas da antiga cidade. Antes da reintegração, Asan era o Deus da Cobiça, o traidor do Pacto, e o povo ainda não esqueceu."}, {"t": "pessoa", "nome": "Rothen", "titulo": "Deus da Justiça", "texto": "**Símbolo:** o Escudo Branco com a espada de pé atrás dele.\n**Virtudes:** justiça, honra, proteção de quem não pode se proteger.\n**Culto:** juramentos solenes diante do altar; é ali que a Guarda e os Cavaleiros juram.\n**Rito principal:** a **Vigília Anual de Rothen**, presidida pelo Sumo-Sacerdote no Grande Templo, com o Rei presente.\n**Quem o procura:** guardas, magistrados, cavaleiros e todos os injustiçados.\n**Casa Rothenien:** reina há dez gerações, guarda a Muralha Norte ao lado do Clã Skaldgard e deu Selvana à luz. A Justiça que pregam envelheceu com Doran."}, {"t": "pessoa", "nome": "Khumar", "titulo": "Deus do Equilíbrio", "texto": "**Símbolo:** a Balança de Dois Pratos dentro de um círculo de cinco marcas.\n**Virtudes:** paciência, moderação, respeito ao Pacto.\n**Culto:** mediações diante do altar; quem jura ali aceita a sentença dos dois lados.\n**Rito principal:** a **Renovação do Pacto**: os sacerdotes dos cinco deuses repetem juntos o Pacto Divino.\n**Quem o procura:** diplomatas, mediadores, juízes de conciliação e os que esperam.\n**Casa Khumarin:** idealizou o Pacto Divino e esperou séculos pela sua vez de reinar. Agora Kael, marcado por Khumar, nasceu na casa de um ferreiro, fora da linhagem."}]},
+   {"titulo": "Templos Menores", "blocos": [{"t": "p", "texto": "O **Grande Templo de Rothen**, na capital, é a sede de Aldras Mão-Branca. O **Templo de Asan em Zharkia** é de Cassian, o Guia da Penumbra. Cada deus tem ainda seu templo menor na cidadela da casa ligada a ele."}, {"t": "pessoa", "nome": "Templo da Lança Erguida", "titulo": "Zanshir · Cidadela Zanshirden", "texto": "**Sacerdotisa Ysolde Passo-Firme:** ex-batedora caolha, abençoa cada arma que parte para a fronteira."}, {"t": "pessoa", "nome": "Templo da Primeira Forja", "titulo": "Hyvitorn · Cidadela Hyvitorn", "texto": "**Sacerdote Orvel Contamoedas:** mede a fé em contratos cumpridos; o mais rico do Clero e o que mais doa."}, {"t": "pessoa", "nome": "Capela do Recomeço", "titulo": "Asan · Cidadela de Asan, sobre as ruínas", "texto": "**Sacerdotisa Irene da Cinza:** discípula de Cassian e subordinada a ele; reconsagra os escombros pedra por pedra e vigia para que o Véu do Rancor não toque o altar."}, {"t": "pessoa", "nome": "Templo do Escudo Branco", "titulo": "Rothen · Cidadela Rothenien", "texto": "**Sacerdotisa Maren do Juramento:** recebe os votos de quem vai à Muralha Norte e critica em silêncio os Cavaleiros."}, {"t": "pessoa", "nome": "Templo dos Dois Pratos", "titulo": "Khumar · Cidadela Khummarin", "texto": "**Sacerdote Teodric Meia-Voz:** mediador paciente; por ordem de Aldras, estuda em segredo o caso de Kael."}]},
    {
     "titulo": "Relações",
     "blocos": [
@@ -1351,7 +1353,7 @@ export const FACCOES: Faccao[] = [
   "nome": "Grande Clã Skaldgard",
   "lema": "\"Thuria arde. O juramento, não.\"",
   "lider": "Jarl Torstein Barba-de-Gelo",
-  "sede": "Salão do Clã, Cidadela dos Rothenien",
+  "sede": "Salão do Clã, Cidadela Rothenien",
   "imagem": "/media/faccoes/grande-cla-skaldgard.webp",
   "oculta": false,
   "extinta": false,
@@ -1368,7 +1370,7 @@ export const FACCOES: Faccao[] = [
      {
       "t": "campo",
       "rotulo": "Sede",
-      "texto": "O **Salão do Clã**, dentro da **Cidadela dos Rothenien**. O povo vive, pesca e caça nos **fiordes do extremo norte**."
+      "texto": "O **Salão do Clã**, dentro da **Cidadela Rothenien**. O povo vive, pesca e caça nos **fiordes do extremo norte**."
      },
      {
       "t": "campo",
@@ -1628,7 +1630,7 @@ export const LORE: PaginaLore[] = [
       "blocos": [
        {
         "t": "p",
-        "texto": "Os sobreviventes organizaram-se no **Grande Clã Skaldgard**, aliança das quatro casas nobres thuriãs: **Skjold, Krag, Vinter e Eisen**. O povo vive e caça nos fiordes; o **Salão do Clã**, onde o Jarl reúne as casas, fica dentro da cidadela dos Rothenien. Nas vilas do norte nasceu a **primeira geração de Thuriões de sangue puro nativos de Tybar**, criada ouvindo as sagas sob a aurora boreal."
+        "texto": "Os sobreviventes organizaram-se no **Grande Clã Skaldgard**, aliança das quatro casas nobres thuriãs: **Skjold, Krag, Vinter e Eisen**. O povo vive e caça nos fiordes; o **Salão do Clã**, onde o Jarl reúne as casas, fica dentro da cidadela Rothenien. Nas vilas do norte nasceu a **primeira geração de Thuriões de sangue puro nativos de Tybar**, criada ouvindo as sagas sob a aurora boreal."
        }
       ]
      },
