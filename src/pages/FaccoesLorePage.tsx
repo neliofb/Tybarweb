@@ -3,6 +3,10 @@ import { CabecalhoPagina, useTitulo } from '../components/ui'
 import { CartaoFaccao, LINKS_SITUACAO, Nota, Txt } from '../components/Lore'
 import { FACCOES, INTRO_FACCOES } from '../data/faccoes'
 
+// Casa Asanien, Véu do Rancor e Skaldgard ficam só nas páginas de Situação Atual (botões acima), não na lista de facções
+export const DOS_POVOS = new Set(['casa-asanien', 'o-veu-do-rancor', 'grande-cla-skaldgard'])
+const FACCOES_LISTADAS = FACCOES.filter(f => !DOS_POVOS.has(f.id))
+
 export default function FaccoesLorePage() {
   useTitulo('Facções de Tybar')
   return (
@@ -15,7 +19,7 @@ export default function FaccoesLorePage() {
         {LINKS_SITUACAO.map(l => <Link key={l.to} to={l.to} className="btn btn-2">{l.rotulo}</Link>)}
       </nav>
       <div className="faccoes-grade">
-        {FACCOES.map(f => <CartaoFaccao key={f.id} id={f.id} />)}
+        {FACCOES_LISTADAS.map(f => <CartaoFaccao key={f.id} id={f.id} />)}
       </div>
     </div>
   )

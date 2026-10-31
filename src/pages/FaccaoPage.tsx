@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useTitulo } from '../components/ui'
 import { Blocos, LINKS_SITUACAO, Nota, RetratoFaccao, Secoes } from '../components/Lore'
 import { FACCOES, LORE } from '../data/faccoes'
+import { DOS_POVOS } from './FaccoesLorePage'
 
 export default function FaccaoPage() {
   const { id } = useParams()
@@ -14,8 +15,10 @@ export default function FaccaoPage() {
       <p className="texto-2">Nenhum registro com esse nome. <Link to="/faccoes">Voltar às facções</Link>.</p>
     </div>
   )
-  const ant = FACCOES[(i - 1 + FACCOES.length) % FACCOES.length]
-  const prox = FACCOES[(i + 1) % FACCOES.length]
+  // navegação anterior/próxima só entre as facções da lista (as dos povos ficam nas páginas de Situação Atual)
+  const nav = FACCOES.filter(x => !DOS_POVOS.has(x.id) || x.id === id), j = nav.findIndex(x => x.id === id)
+  const ant = nav[(j - 1 + nav.length) % nav.length]
+  const prox = nav[(j + 1) % nav.length]
   const situacao = LORE.filter(l => l.faccoes.includes(f.id))
   const linkSit = (lid: string) => LINKS_SITUACAO.find(x => x.to.endsWith('/' + lid))
 
