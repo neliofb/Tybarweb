@@ -12,6 +12,7 @@ export interface DadosLoot {
   criaturas: { criaturas: Record<string, Criatura>; [k: string]: any }
   grupos: { grupos: Grupo[]; [k: string]: any }
   ativo: boolean
+  avisos?: string[]
 }
 export interface Tipo { nome: string; completo: string; tipo: 'item' | 'criatura' }
 export interface Simulacao {

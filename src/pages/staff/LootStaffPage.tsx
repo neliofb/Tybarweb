@@ -129,10 +129,11 @@ export default function LootStaffPage() {
   const nomesCri = useMemo(() => Object.keys(cris).filter(k => k.toLowerCase().includes(busca.toLowerCase())).sort((a, b) => curto(a).localeCompare(curto(b))), [cris, busca])
   const nomesCat = Object.keys(cats).filter(k => k.toLowerCase().includes(busca.toLowerCase())).sort()
 
+  const [avisos, setAvisos] = useState<string[]>([])
   const salvar = async () => {
     if (!dados) return
-    setSalvando(true); setAviso(null)
-    try { const r = await salvarLoot({ categorias: dados.categorias, criaturas: dados.criaturas, grupos: dados.grupos }); setDados(r.data); setSujo(false); setAviso({ ok: true, texto: 'Salvo. O motor já recarregou (confira com [lootinfo no jogo).' }) }
+    setSalvando(true); setAviso(null); setAvisos([])
+    try { const r = await salvarLoot({ categorias: dados.categorias, criaturas: dados.criaturas, grupos: dados.grupos }); setDados(r.data); setSujo(false); setAviso({ ok: true, texto: 'Salvo. O motor já recarregou (confira com [lootinfo no jogo).' }); setAvisos(r.data.avisos || []) }
     catch (e) { setAviso({ ok: false, texto: msgErro(e) }) } finally { setSalvando(false) }
   }
 
@@ -174,6 +175,7 @@ export default function LootStaffPage() {
         {sujo && <span className="selo selo-pendente">Alterações não salvas</span>}
         <button className="btn" onClick={salvar} disabled={salvando || !sujo}>{salvando ? 'Salvando…' : 'Salvar'}</button>
       </div>}
+      {avisos.length > 0 && <div className="aviso" role="status" style={{ marginBottom: 10, background: '#fff3cd', color: '#664d03', border: '1px solid #e0b84c' }}><strong>Avisos (não impediram de salvar; use [LootLimpar no jogo para remover o que não existe):</strong><ul style={{ margin: '4px 0 0 18px' }}>{avisos.map((a, i) => <li key={i}>{a}</li>)}</ul></div>}
       {aviso && <div className={'aviso ' + (aviso.ok ? 'aviso-ok' : 'aviso-erro')} role={aviso.ok ? 'status' : 'alert'} style={{ marginBottom: 10 }}>{aviso.texto}</div>}
       {pendente && <div className="aviso" style={{ marginBottom: 10 }}>Item vindo do jogo: <strong>{pendente}</strong>. Escolha uma criatura ou categoria e use o botão “+ {pendente}” na regra.</div>}
 
