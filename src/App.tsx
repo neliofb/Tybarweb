@@ -24,6 +24,7 @@ const JogadoresPage = lazy(() => import('./pages/staff/JogadoresPage'))
 const MapaPage = lazy(() => import('./pages/MapaPage'))
 const FaunaStaffPage = lazy(() => import('./pages/staff/FaunaStaffPage'))
 const LootStaffPage = lazy(() => import('./pages/staff/LootStaffPage'))
+const ColetaStaffPage = lazy(() => import('./pages/staff/ColetaStaffPage'))
 const EsfolarStaffPage = lazy(() => import('./pages/staff/EsfolarStaffPage'))
 const BuildsOficiaisPage = lazy(() => import('./pages/staff/BuildsOficiaisPage'))
 
@@ -66,6 +67,7 @@ export default function App() {
             <Route path="staff/jogadores" element={<SoStaff admin><JogadoresPage /></SoStaff>} />
             <Route path="staff/builds" element={<SoStaff><BuildsOficiaisPage /></SoStaff>} />
             <Route path="staff/fauna" element={<SoStaff><FaunaStaffPage /></SoStaff>} />
+            <Route path="staff/coleta" element={<SoStaff><ColetaStaffPage /></SoStaff>} />
             <Route path="staff/loot" element={<SoStaff><LootStaffPage /></SoStaff>} />
             <Route path="staff/esfolar" element={<SoStaff><EsfolarStaffPage /></SoStaff>} />
 
