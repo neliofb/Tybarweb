@@ -6,6 +6,7 @@ const FERRAMENTAS = [
   { to: '/staff/pedidos', nome: 'Pedidos', desc: 'Aprovar ou recusar pedidos de conta.' },
   { to: '/staff/jogadores', nome: 'Contas e jogadores', desc: 'Contas, níveis e banimentos.', admin: true },
   { to: '/staff/builds', nome: 'Builds oficiais', desc: 'Builds sugeridas na página de builds.' },
+  { to: '/guerra', nome: 'Sala de Guerra', desc: 'Painel antigo: registro de combate, magia e cura, e equilíbrio.' },
   { to: '/staff/fauna', nome: 'Fauna', desc: 'Zonas de criaturas, faixas de perícia e biomas.' },
   { to: '/staff/coleta', nome: 'Coleta', desc: 'Recursos de mineração, lenha e coleta.' },
   { to: '/staff/loot', nome: 'Loot', desc: 'Tabelas de loot das criaturas.' },
