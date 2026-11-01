@@ -101,7 +101,7 @@ export const FACCOES: Faccao[] = [
      {
       "t": "campo",
       "rotulo": "Zharkia",
-      "texto": "Ignora que o muro mudou de dono. O nome \"Filhos da Areia\", antes dado aos mestiços de Zharkia (ano 358), foi tomado de propósito: **é um chamado para que voltem para casa**."
+      "texto": "Ignora que o muro mudou de dono. Os Filhos da Areia são aquilranos de sangue puro e nada têm a ver com os mestiços nascidos em Zharkia (ano 358), que se dizem zharkianos. Veem neles parentes perdidos e esperam **chamá-los de volta para casa**."
      }
     ]
    }
