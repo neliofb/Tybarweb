@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getMapaFauna, salvarZonas, normalizarMapa, Zona, Retangulo, Ajustes, Horario, dentro, MapaFauna as Mapa,
-  getFaixasNivel, salvarFaixasNivel, normalizarFaixas, FaixaNivel, corDaFaixa, PERICIA_MAX, celulasDe, celulasForma, retangulosDe, CEL } from '../../api/fauna'
+  getFaixasNivel, salvarFaixasNivel, salvarBiomasAjustes, normalizarFaixas, FaixaNivel, corDaFaixa, PERICIA_MAX, celulasDe, celulasForma, retangulosDe, CEL } from '../../api/fauna'
 import { msgErro } from '../../api/site'
 import MapaFauna, { corDoTipo, Ponteiro, ListaMarcavel } from '../../components/MapaFauna'
 import { CabecalhoPagina, Carregando, Erro, Modal, useDados, useTitulo } from '../../components/ui'
 
 type Modo = 'mover' | 'desenhar' | 'pincel' | 'quadrado' | 'circulo' | 'borracha'
-type Aba = 'zonas' | 'niveis'
+type Aba = 'zonas' | 'niveis' | 'biomas'
 interface Item { id: string; retangulos: Retangulo[] }
 type Arrasto =
   | { tipo: 'desenhar'; x0: number; y0: number; x1: number; y1: number }
@@ -68,16 +68,20 @@ export default function FaunaStaffPage() {
   const [faixas, setFaixas] = useState<FaixaNivel[]>([])
   const [selF, setSelF] = useState<string | null>(null)
   const [sujoF, setSujoF] = useState(false)
+  const [ajB, setAjB] = useState<Item[]>([])   // um item por bioma: retângulos = área pintada por cima do original
+  const [selB, setSelB] = useState<string | null>(null)
+  const [sujoB, setSujoB] = useState(false)
   const [apagarF, setApagarF] = useState<FaixaNivel | null>(null)
 
-  useEffect(() => { if (d.dados) { setMapa(d.dados); setZonas(d.dados.zonas) } }, [d.dados])
+  useEffect(() => { if (d.dados) { setMapa(d.dados); setZonas(d.dados.zonas)
+    setAjB(d.dados.biomas.map(b => ({ id: String(b.id), retangulos: d.dados!.ajustesBiomas?.find(a => a.bioma === b.nome)?.retangulos ?? [] }))) } }, [d.dados])
   useEffect(() => { if (dn.dados) setFaixas(dn.dados) }, [dn.dados])
   useEffect(() => {
-    if (!sujo && !sujoF) return
+    if (!sujo && !sujoF && !sujoB) return
     const f = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = '' }
     window.addEventListener('beforeunload', f)
     return () => window.removeEventListener('beforeunload', f)
-  }, [sujo, sujoF])
+  }, [sujo, sujoF, sujoB])
 
   const zona = zonas.find(z => z.id === sel) ?? null
   const faixa = faixas.find(f => f.id === selF) ?? null
@@ -85,13 +89,18 @@ export default function FaunaStaffPage() {
   const mudarFaixa = (id: string, f: (z: FaixaNivel) => FaixaNivel) => { setFaixas(fs => fs.map(z => z.id === id ? f(z) : z)); setSujoF(true); setAviso(null) }
 
   // ── item em edição, genérico para as duas abas (zona de fauna ou faixa de nível) ──
-  const item: Item | null = aba === 'zonas' ? zona : faixa
-  const itens: Item[] = aba === 'zonas' ? zonas : faixas
-  const visItens = aba === 'zonas' ? visZonas : visFaixas
-  const mudarItem = (id: string, f: (i: Item) => Item) => aba === 'zonas' ? mudarZona(id, z => ({ ...z, ...f(z) })) : mudarFaixa(id, z => ({ ...z, ...f(z) }))
+  const biomaSel = ajB.find(b => b.id === selB) ?? null
+  const item: Item | null = aba === 'zonas' ? zona : aba === 'niveis' ? faixa : biomaSel
+  const itens: Item[] = aba === 'zonas' ? zonas : aba === 'niveis' ? faixas : ajB
+  const visBiomasAj = useMemo(() => new Set(ajB.map(b => b.id)), [ajB])
+  const visItens = aba === 'zonas' ? visZonas : aba === 'niveis' ? visFaixas : visBiomasAj
+  const mudarBioma = (id: string, f: (i: Item) => Item) => { setAjB(bs => bs.map(b => b.id === id ? f(b) : b)); setSujoB(true); setAviso(null) }
+  const mudarItem = (id: string, f: (i: Item) => Item) => aba === 'zonas' ? mudarZona(id, z => ({ ...z, ...f(z) })) : aba === 'niveis' ? mudarFaixa(id, z => ({ ...z, ...f(z) })) : mudarBioma(id, f)
+  const corBioma = (id: string) => mapa?.biomas.find(b => String(b.id) === id)?.cor ?? '#ecd38a'
   /** escolher para editar já marca o item como visível */
   const escolher = (id: string | null) => {
     if (aba === 'zonas') { setSel(id); if (id) setVisZonas(v => v.has(id) ? v : new Set(v).add(id)) }
+    else if (aba === 'biomas') setSelB(id)
     else { setSelF(id); if (id) setVisFaixas(v => v.has(id) ? v : new Set(v).add(id)) }
     setRetSel(null)
   }
@@ -108,12 +117,23 @@ export default function FaunaStaffPage() {
     setFaixas(fs => [...fs, f]); setSelF(f.id); setVisFaixas(v => new Set(v).add(f.id)); setRetSel(null); setSujoF(true)
     return f
   }
-  const novoItem = (rets: Retangulo[]) => { if (aba === 'zonas') novaZona(rets); else novaFaixa(rets) }
+  const novoItem = (rets: Retangulo[]) => { if (aba === 'zonas') novaZona(rets); else if (aba === 'niveis') novaFaixa(rets); else setAviso({ ok: false, texto: 'Escolha na lista o bioma a pintar.' }) }
 
   /** pinta (ou apaga) células 8x8 na área do item escolhido; sem item, pintar cria um novo */
   const aplicarCelulas = (cels: Set<number>, apagar: boolean) => {
     if (cels.size === 0) return
     if (!item) { if (!apagar) novoItem(retangulosDe(cels)); return }
+    if (aba === 'biomas') {
+      // pintar um bioma tira a célula dos outros ajustes; apagar devolve a célula ao bioma original
+      setAjB(bs => bs.map(b => {
+        if (b.id === item.id) { const at = celulasDe(b.retangulos); for (const c of cels) { if (apagar) at.delete(c); else at.add(c) } return { ...b, retangulos: retangulosDe(at) } }
+        if (apagar) return b
+        const at = celulasDe(b.retangulos); let mudou = false
+        for (const c of cels) if (at.delete(c)) mudou = true
+        return mudou ? { ...b, retangulos: retangulosDe(at) } : b
+      }))
+      setSujoB(true); setAviso(null); setRetSel(null); return
+    }
     mudarItem(item.id, z => {
       const atuais = celulasDe(z.retangulos)
       for (const c of cels) { if (apagar) atuais.delete(c); else atuais.add(c) }
@@ -222,6 +242,18 @@ export default function FaunaStaffPage() {
     } finally { setSalvando(false) }
   }
 
+  const salvarBiomas = async () => {
+    setSalvando(true); setAviso(null)
+    try {
+      await salvarBiomasAjustes(ajB.filter(b => b.retangulos.length).map(b => ({ bioma: mapa!.biomas.find(x => String(x.id) === b.id)!.nome, retangulos: b.retangulos })))
+      setSujoB(false)
+      setAviso({ ok: true, texto: 'Biomas salvos. O servidor já refez o mapa de spawn (monstros, perigos e teletransporte seguem o novo bioma).' })
+    } catch (e) {
+      const prob = (e as any)?.response?.data?.problemas as string[] | undefined
+      setAviso({ ok: false, texto: msgErro(e) + (prob?.length ? ': ' + prob.join('; ') : '') })
+    } finally { setSalvando(false) }
+  }
+
   const salvar = async () => {
     const semCriatura = zonas.filter(z => !z.criatura)
     if (semCriatura.length) { setAviso({ ok: false, texto: `Escolha a criatura de: ${semCriatura.map(z => z.nome || z.id).join(', ')}.` }); setSel(semCriatura[0].id); return }
@@ -280,7 +312,7 @@ export default function FaunaStaffPage() {
   )
   const ferramenta = FERRAMENTAS.find(f => f.id === modo)!
   const usaTamanho = modo === 'pincel' || modo === 'borracha'
-  const sujoAba = aba === 'zonas' ? sujo : sujoF
+  const sujoAba = aba === 'zonas' ? sujo : aba === 'niveis' ? sujoF : sujoB
 
   return (
     <div className="pagina pagina-larga">
@@ -290,6 +322,7 @@ export default function FaunaStaffPage() {
       <div className="abas-mapa" role="tablist" aria-label="Editor">
         <button role="tab" aria-selected={aba === 'zonas'} onClick={() => { setAba('zonas'); setRetSel(null); setAviso(null) }}>Zonas{sujo ? ' •' : ''}</button>
         <button role="tab" aria-selected={aba === 'niveis'} onClick={() => { setAba('niveis'); setRetSel(null); setAviso(null) }}>Níveis{sujoF ? ' •' : ''}</button>
+        <button role="tab" aria-selected={aba === 'biomas'} onClick={() => { setAba('biomas'); setRetSel(null); setAviso(null) }}>Biomas{sujoB ? ' •' : ''}</button>
       </div>
       <div className="mapa-layout mapa-layout-staff">
         <div>
@@ -306,11 +339,11 @@ export default function FaunaStaffPage() {
             )}
             <span style={{ flex: 1 }} />
             {sujoAba && <span className="selo selo-pendente">Alterações não salvas</span>}
-            <button className="btn" onClick={aba === 'zonas' ? salvar : salvarFaixas} disabled={salvando || !sujoAba}>{salvando ? 'Salvando…' : 'Salvar'}</button>
+            <button className="btn" onClick={aba === 'zonas' ? salvar : aba === 'niveis' ? salvarFaixas : salvarBiomas} disabled={salvando || !sujoAba}>{salvando ? 'Salvando…' : 'Salvar'}</button>
           </div>
           {aviso && <div className={'aviso ' + (aviso.ok ? 'aviso-ok' : 'aviso-erro')} role={aviso.ok ? 'status' : 'alert'} style={{ marginBottom: 10 }}>{aviso.texto}</div>}
           <MapaFauna
-            mapa={mapa} zonas={zonas} rotulo={aba === 'zonas' ? 'Editor de zonas de fauna' : 'Editor de faixas de perícia'}
+            mapa={mapa} zonas={zonas} rotulo={aba === 'zonas' ? 'Editor de zonas de fauna' : aba === 'niveis' ? 'Editor de faixas de perícia' : 'Editor de biomas'}
             biomasVisiveis={visBiomas} zonasVisiveis={visZonas}
             zonasOcultas={ocultas} cursor={modo === 'mover' ? undefined : usaTamanho ? 'none' : 'crosshair'}
             aoApertar={aoApertar} aoMover={aoMover} aoSoltar={aoSoltar} aoCancelar={() => setArrasto(null)} aoPairar={setPairar}
@@ -323,9 +356,14 @@ export default function FaunaStaffPage() {
                     {f.retangulos.map((r, i) => <rect key={i} x={r.x} y={r.y} width={r.largura} height={r.altura} fill={f.cor} fillOpacity={.35} stroke={f.cor} strokeWidth={1.2 / s} />)}
                   </g>
                 ))}
+                {aba === 'biomas' && ajB.filter(b => b.id !== selB).map(b => (
+                  <g key={b.id}>
+                    {b.retangulos.map((r, i) => <rect key={i} x={r.x} y={r.y} width={r.largura} height={r.altura} fill={corBioma(b.id)} fillOpacity={.7} shapeRendering="crispEdges" style={{ pointerEvents: 'none' }} />)}
+                  </g>
+                ))}
                 {item && item.retangulos.map((r, i) => (
                   <rect key={i} data-ret={i} x={r.x} y={r.y} width={r.largura} height={r.altura}
-                    fill={aba === 'zonas' ? corDoTipo(zona?.criatura || item.id) : faixa!.cor} fillOpacity={i === retSel ? .55 : .4}
+                    fill={aba === 'zonas' ? corDoTipo(zona?.criatura || item.id) : aba === 'niveis' ? faixa!.cor : corBioma(item.id)} fillOpacity={aba === 'biomas' ? .85 : i === retSel ? .55 : .4}
                     stroke={i === retSel ? '#fff' : '#ecd38a'} strokeWidth={(i === retSel ? 2 : 1.2) / s}
                     shapeRendering="crispEdges" style={{ cursor: modo === 'mover' ? 'move' : undefined }} />
                 ))}
@@ -372,7 +410,14 @@ export default function FaunaStaffPage() {
         </div>
 
         <aside className="mapa-lateral">
-          {aba === 'zonas' ? (
+          {aba === 'biomas' ? (
+            <section className="painel painel-fino">
+              <h3 style={{ margin: '0 0 8px' }}>Pintar bioma</h3>
+              <ListaMarcavel titulo="Escolha o bioma e pinte no mapa" marcados={visBiomasAj} mudar={() => {}} escolhido={selB} aoEscolher={id => escolher(id === selB ? null : id)} vazio="Sem biomas."
+                itens={mapa.biomas.map(b => ({ id: String(b.id), nome: b.nome, cor: b.cor, extra: <small className="discreto">{(ajB.find(a => a.id === String(b.id))?.retangulos.length ?? 0)} ▭</small> }))} />
+              <p className="discreto" style={{ marginTop: 6 }}>Escolha um bioma e pinte por cima do original (grade 8x8). A borracha tira o ajuste e a célula volta ao bioma original. Vale para monstros, reagentes, perigos e o teletransporte da Floresta Numaja.</p>
+            </section>
+          ) : aba === 'zonas' ? (
             <section className="painel painel-fino">
               <div className="linha linha-entre" style={{ marginBottom: 8 }}>
                 <h3 style={{ margin: 0 }}>Zonas ({zonas.length})</h3>
@@ -395,10 +440,10 @@ export default function FaunaStaffPage() {
             </section>
           )}
 
-          <section className="painel painel-fino">
+          {aba !== 'biomas' && <section className="painel painel-fino">
             <ListaMarcavel titulo="Biomas" itens={mapa.biomas.map(b => ({ id: b.id, nome: b.nome, cor: b.cor }))} marcados={visBiomas} mudar={setVisBiomas} />
             {aba === 'niveis' && <p className="discreto" style={{ marginTop: 6 }}>As zonas de fauna marcadas na aba Zonas também aparecem aqui como referência.</p>}
-          </section>
+          </section>}
 
           {aba === 'niveis' && faixa && (
             <section className="painel painel-fino form-zona" aria-label={'Região ' + faixa.nome}>

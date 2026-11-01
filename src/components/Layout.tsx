@@ -52,15 +52,7 @@ export default function Layout() {
           )}
           {s.staff && (
             <div className="nav-grupo" aria-label="Área da staff">
-              <span className="nav-rotulo">Staff</span>
-              <NavLink to="/staff/pedidos" className={cls}>Pedidos</NavLink>
-              {s.admin && <NavLink to="/staff/jogadores" className={cls}>Jogadores</NavLink>}
-              <NavLink to="/staff/builds" className={cls}>Builds oficiais</NavLink>
-              <NavLink to="/staff/fauna" className={cls}>Fauna</NavLink>
-              <NavLink to="/staff/coleta" className={cls}>Coleta</NavLink>
-              <NavLink to="/staff/loot" className={cls}>Loot</NavLink>
-              <NavLink to="/staff/esfolar" className={cls}>Esfolar</NavLink>
-              <NavLink to="/mapa?aba=criaturas" className={() => ""}>Mapa de criaturas</NavLink>
+              <NavLink to="/staff" className={cls}>Staff</NavLink>
             </div>
           )}
           <div className="cab-conta">

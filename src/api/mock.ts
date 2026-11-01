@@ -273,6 +273,7 @@ rota('post', '/api/staff/fauna/niveis', (_m, b: any) => {
   niveisMock = (b?.regioes ?? []).map((r: any, i: number) => ({ ...r, id: r.id ?? 'r' + (100 + i) }))
   return ok({ ok: true, regioes: niveisMock })
 })
+rota('post', '/api/staff/fauna/biomas', (_m, b: any) => staff() ? ok({ ok: true, biomas: b?.biomas ?? [] }) : falha(403, 'Só staff.'))
 rota('get', '/api/staff/pedidos', () => staff() ? ok(pedidos) : falha(403, 'Só staff.'))
 rota('post', '/api/staff/pedidos/([^/]+)/aprovar', m => {
   const p = pedidos.find(x => x.id === m[1]); if (!p) return falha(404, 'Pedido não encontrado.')

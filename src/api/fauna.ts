@@ -77,6 +77,8 @@ export interface MapaFauna {
   zonas: Zona[]
   criaturas: CriaturaCatalogo[]
   climas: string[]
+  /** bioma pintado pela staff por cima do original (por nome do bioma) */
+  ajustesBiomas?: { bioma: string; retangulos: Retangulo[] }[]
   geradoEm?: string
 }
 
@@ -164,6 +166,7 @@ export function normalizarMapa(d: any): MapaFauna {
     biomas, zonas, criaturas: [...vistos.values()].sort((a, b) => a.nome.localeCompare(b.nome, 'pt')),
     climas: d.climas ?? ['chuva', 'tempestade', 'neve', 'nevasca', 'névoa', 'calor'],
     geradoEm: d.gerado_em ?? d.geradoEm,
+    ajustesBiomas: (d.ajustes_biomas ?? []).map((a: any) => ({ bioma: String(a.bioma), retangulos: (a.retangulos ?? []).map(retangulo) })),
   }
 }
 
@@ -286,3 +289,9 @@ export function retangulosDe(cels: Set<number>): Retangulo[] {
   for (const r of abertos.values()) fim.push(r)
   return fim
 }
+
+/** POST /api/staff/fauna/biomas (GameMaster+): lista completa dos ajustes; o servidor refaz o mapa de spawn na hora */
+export const salvarBiomasAjustes = (aj: { bioma: string; retangulos: Retangulo[] }[]) =>
+  api.post<{ ok: boolean; biomas?: any[]; problemas?: string[] }>('/api/staff/fauna/biomas', {
+    biomas: aj.map(a => ({ bioma: a.bioma, retangulos: a.retangulos.map(r => ({ x: Math.round(r.x), y: Math.round(r.y), largura: Math.round(r.largura), altura: Math.round(r.altura) })) })),
+  })

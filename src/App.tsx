@@ -19,6 +19,7 @@ const FaccoesLorePage = lazy(() => import('./pages/FaccoesLorePage'))
 const FaccaoPage = lazy(() => import('./pages/FaccaoPage'))
 const LoreSituacaoPage = lazy(() => import('./pages/LoreSituacaoPage'))
 const WarPage = lazy(() => import('./pages/WarPage'))
+const StaffHomePage = lazy(() => import('./pages/staff/StaffHomePage'))
 const PedidosPage = lazy(() => import('./pages/staff/PedidosPage'))
 const JogadoresPage = lazy(() => import('./pages/staff/JogadoresPage'))
 const MapaPage = lazy(() => import('./pages/MapaPage'))
@@ -63,6 +64,7 @@ export default function App() {
             <Route path="oficios" element={<SoLogado><OficiosPage /></SoLogado>} />
             <Route path="minhas-builds" element={<SoLogado><MinhasBuildsPage /></SoLogado>} />
 
+            <Route path="staff" element={<SoStaff><StaffHomePage /></SoStaff>} />
             <Route path="staff/pedidos" element={<SoStaff><PedidosPage /></SoStaff>} />
             <Route path="staff/jogadores" element={<SoStaff admin><JogadoresPage /></SoStaff>} />
             <Route path="staff/builds" element={<SoStaff><BuildsOficiaisPage /></SoStaff>} />
