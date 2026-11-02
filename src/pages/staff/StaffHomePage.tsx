@@ -12,6 +12,7 @@ const FERRAMENTAS: { to: string; nome: string; desc: string; admin?: boolean; ex
   { to: '/staff/coleta', nome: 'Coleta', desc: 'Recursos de mineração, lenha e coleta.' },
   { to: '/staff/loot', nome: 'Loot', desc: 'Tabelas de loot das criaturas.' },
   { to: '/staff/esfolar', nome: 'Esfolar', desc: 'O que cada criatura rende ao esfolar.' },
+  { to: '/staff/vrark', nome: 'Animações Vrark', desc: 'Escolher quais das 964 criaturas Vrark entram no jogo.' },
   { to: '/mapa?aba=criaturas', nome: 'Mapa de criaturas', desc: 'Onde cada criatura nasce, com números da staff.' },
 ]
 
