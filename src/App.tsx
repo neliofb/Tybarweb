@@ -27,6 +27,7 @@ const FaunaStaffPage = lazy(() => import('./pages/staff/FaunaStaffPage'))
 const LootStaffPage = lazy(() => import('./pages/staff/LootStaffPage'))
 const ColetaStaffPage = lazy(() => import('./pages/staff/ColetaStaffPage'))
 const EsfolarStaffPage = lazy(() => import('./pages/staff/EsfolarStaffPage'))
+const CombateStaffPage = lazy(() => import('./pages/staff/CombateStaffPage'))
 const BuildsOficiaisPage = lazy(() => import('./pages/staff/BuildsOficiaisPage'))
 
 // As páginas antigas (Painel, Facções, Guerra) têm layout próprio: ficam numa moldura para não colar no cabeçalho
@@ -68,6 +69,7 @@ export default function App() {
             <Route path="staff/pedidos" element={<SoStaff><PedidosPage /></SoStaff>} />
             <Route path="staff/jogadores" element={<SoStaff admin><JogadoresPage /></SoStaff>} />
             <Route path="staff/builds" element={<SoStaff><BuildsOficiaisPage /></SoStaff>} />
+            <Route path="staff/combate" element={<SoStaff><CombateStaffPage /></SoStaff>} />
             <Route path="staff/fauna" element={<SoStaff><FaunaStaffPage /></SoStaff>} />
             <Route path="staff/coleta" element={<SoStaff><ColetaStaffPage /></SoStaff>} />
             <Route path="staff/loot" element={<SoStaff><LootStaffPage /></SoStaff>} />
