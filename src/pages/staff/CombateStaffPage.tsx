@@ -6,6 +6,7 @@ import { CabecalhoPagina, Carregando, Erro, useTitulo } from '../../components/u
 const DIMS: { id: DimCombate; nome: string }[] = [
   { id: 'classe', nome: 'Classe/kit' }, { id: 'estilo', nome: 'Arma (estilo)' }, { id: 'modelo', nome: 'Arma (modelo)' },
   { id: 'matArma', nome: 'Material da arma' }, { id: 'matArmadura', nome: 'Material da armadura' },
+  { id: 'faixa', nome: 'Faixa de perícia da arma' }, { id: 'periciaTop', nome: 'Perícia mais alta (arma/magia)' },
   { id: 'magia', nome: 'Magia/ação' }, { id: 'escola', nome: 'Escola' }, { id: 'jogador', nome: 'Jogador' },
 ]
 type Col = 'chave' | 'causado' | 'nCausado' | 'media' | 'recebido' | 'cura' | 'golpes' | 'acerto' | 'crit'
