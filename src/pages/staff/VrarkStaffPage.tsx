@@ -4,6 +4,10 @@ import { msgErro } from '../../api/site'
 import { Busca, CabecalhoPagina, Carregando, Erro, useDados, useTitulo } from '../../components/ui'
 import { ComoUsar } from '../../components/LootUi'
 import lista from '../../data/vrark.json'
+import links from '../../data/vrark-links.json'
+
+// corpo -> link da entrada original no Vrark Art
+const LINKS = links as Record<string, string>
 
 // [corpo, nome, tipo (H monstro, L animal), grande (1 = vai no anim2.mul)]
 const TODAS = lista as [number, string, 'H' | 'L', number][]
@@ -15,6 +19,7 @@ export default function VrarkStaffPage() {
   const [sel, setSel] = useState<Set<number>>(new Set())
   const [busca, setBusca] = useState(''), [filtro, setFiltro] = useState<Filtro>('todos')
   const [sujo, setSujo] = useState(false), [salvando, setSalvando] = useState(false)
+  const [aberta, setAberta] = useState<[number, string, 'H' | 'L', number] | null>(null)
   const [aviso, setAviso] = useState<{ ok: boolean; texto: string } | null>(null)
 
   useEffect(() => { if (d.dados) { setSel(new Set(d.dados.selecionadas)); setSujo(false) } }, [d.dados])
@@ -62,16 +67,31 @@ export default function VrarkStaffPage() {
         <button className="btn" onClick={salvar} disabled={salvando || !sujo}>{salvando ? 'Salvando…' : 'Salvar'}</button>
       </div>
       {aviso && <div className={'aviso ' + (aviso.ok ? 'aviso-ok' : 'aviso-erro')} role={aviso.ok ? 'status' : 'alert'} style={{ marginBottom: 10 }}>{aviso.texto}</div>}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))', gap: 10 }}>
         {visiveis.map(([c, n, t, g]) => (
           <label key={c} className="painel painel-fino" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: 8, cursor: 'pointer', textAlign: 'center', outline: sel.has(c) ? '2px solid var(--ouro, #c9a227)' : 'none' }}>
-            <img src={`/media/vrark/${c}.webp`} alt="" loading="lazy" width={96} height={96} style={{ objectFit: 'contain' }} />
+            <img src={`/media/vrark/${c}.webp`} alt={n} loading="lazy" width={150} height={150} title="Clique para ampliar" onClick={e => { e.preventDefault(); setAberta([c, n, t, g]) }} style={{ objectFit: 'contain', imageRendering: 'pixelated', cursor: 'zoom-in' }} />
             <strong style={{ fontSize: 13, lineHeight: 1.2 }}>{n}</strong>
             <span className="discreto" style={{ fontSize: 12 }}>corpo {c} · {t === 'H' ? 'monstro' : 'animal'}{g ? ' · grande' : ''}</span>
             <span><input type="checkbox" checked={sel.has(c)} onChange={() => alternar(c)} /> usar no servidor</span>
           </label>
         ))}
       </div>
+      {aberta && (
+        <div role="dialog" aria-modal="true" aria-label={aberta[1]} onClick={() => setAberta(null)} onKeyDown={e => e.key === 'Escape' && setAberta(null)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+          <div className="painel" onClick={e => e.stopPropagation()} style={{ padding: 16, textAlign: 'center', maxWidth: 560, width: '100%' }}>
+            <img src={`/media/vrark/grande/${aberta[0]}.webp`} onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = `/media/vrark/${aberta[0]}.webp` }}
+              alt={aberta[1]} style={{ width: '100%', maxHeight: '60vh', objectFit: 'contain', imageRendering: 'pixelated', background: '#111' }} />
+            <h3 style={{ margin: '8px 0 2px' }}>{aberta[1]}</h3>
+            <p className="discreto">corpo {aberta[0]} · slot {aberta[2]} ({aberta[2] === 'H' ? 'monstro' : 'animal'}){aberta[3] ? ' · grande' : ''}</p>
+            <div className="linha" style={{ gap: 10, justifyContent: 'center' }}>
+              {LINKS[aberta[0]] && <a className="btn btn-2" href={LINKS[aberta[0]]} target="_blank" rel="noopener noreferrer">Ver no Vrark Art</a>}
+              <button className="btn" autoFocus onClick={() => setAberta(null)}>Fechar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
