@@ -8,6 +8,7 @@ const FERRAMENTAS: { to: string; nome: string; desc: string; admin?: boolean; ex
   { to: '/staff/builds', nome: 'Builds oficiais', desc: 'Builds sugeridas na página de builds.' },
   { to: 'http://localhost:8765', externo: true, nome: 'Sala de Guerra', desc: 'Painel dos agentes (só no PC do dono).' },
   { to: '/staff/combate', nome: 'Registro de combate', desc: 'Dano, cura, acerto e crítico por classe, arma, armadura e magia.' },
+  { to: '/staff/materiais', nome: 'Materiais', desc: 'Bônus de metais, couros e madeiras, armaduras, armas e simulador.' },
   { to: '/staff/fauna', nome: 'Fauna', desc: 'Zonas de criaturas, faixas de perícia e biomas.' },
   { to: '/staff/coleta', nome: 'Coleta', desc: 'Recursos de mineração, lenha e coleta.' },
   { to: '/staff/loot', nome: 'Loot', desc: 'Tabelas de loot das criaturas.' },
