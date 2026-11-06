@@ -47,6 +47,7 @@ export default function Layout() {
               <NavLink to="/faccoes-em-jogo" className={cls}>Facções em jogo</NavLink>
               <NavLink to="/bestiario" className={cls}>Bestiário</NavLink>
               <NavLink to="/oficios" className={cls}>Ofícios</NavLink>
+              <NavLink to="/talentos" className={cls}>Talentos</NavLink>
               <NavLink to="/minhas-builds" className={cls}>Minhas builds</NavLink>
             </div>
           )}

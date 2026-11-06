@@ -13,6 +13,7 @@ const BuildDetalhePage = lazy(() => import('./pages/BuildDetalhePage'))
 const MinhasBuildsPage = lazy(() => import('./pages/MinhasBuildsPage'))
 const BestiarioPage = lazy(() => import('./pages/BestiarioPage'))
 const OficiosPage = lazy(() => import('./pages/OficiosPage'))
+const TalentosPage = lazy(() => import('./pages/TalentosPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const FactionsPage = lazy(() => import('./pages/FactionsPage'))
 const FaccoesLorePage = lazy(() => import('./pages/FaccoesLorePage'))
@@ -65,6 +66,8 @@ export default function App() {
             <Route path="guerra" element={<SoLogado><Antiga><WarPage /></Antiga></SoLogado>} />
             <Route path="bestiario" element={<SoLogado><BestiarioPage /></SoLogado>} />
             <Route path="oficios" element={<SoLogado><OficiosPage /></SoLogado>} />
+            <Route path="talentos" element={<TalentosPage />} />
+            <Route path="staff/talentos" element={<SoStaff><TalentosPage staff /></SoStaff>} />
             <Route path="minhas-builds" element={<SoLogado><MinhasBuildsPage /></SoLogado>} />
 
             <Route path="staff" element={<SoStaff><StaffHomePage /></SoStaff>} />
