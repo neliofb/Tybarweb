@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage'
 
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const CodicePage = lazy(() => import('./pages/CodicePage'))
+const NavioPage = lazy(() => import('./pages/NavioPage'))
 const CadastroPage = lazy(() => import('./pages/CadastroPage'))
 const SimuladorPage = lazy(() => import('./pages/SimuladorPage'))
 const BuildsPage = lazy(() => import('./pages/BuildsPage'))
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="entrar" element={<LoginPage />} />
             <Route path="login" element={<Navigate to="/entrar" replace />} />
             <Route path="codice" element={<CodicePage />} />
+            <Route path="navio" element={<NavioPage />} />
             <Route path="codice/:id" element={<CodicePage />} />
             <Route path="criar-conta" element={<CadastroPage />} />
             <Route path="cadastro" element={<Navigate to="/criar-conta" replace />} />

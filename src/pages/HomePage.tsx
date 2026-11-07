@@ -68,6 +68,7 @@ export default function HomePage() {
             <p>Muitas lógicas lembram aquele tempo; muitas outras foram refeitas ou criadas aqui: ofícios em cena, guerra de facções, magias pagas com sangue, clima que mata e um códice inteiro para quem quiser entender o mundo antes de pisar nele.</p>
             <div className="linha" style={{ marginTop: 22 }}>
               <Link to="/codice" className="btn btn-2">Abrir o Códice</Link>
+              <Link to="/navio" className="btn btn-2">O Navio</Link>
               <Link to="/builds" className="btn btn-2">Ver builds</Link>
             </div>
           </div>
