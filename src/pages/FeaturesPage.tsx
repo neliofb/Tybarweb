@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { CabecalhoPagina, useTitulo } from '../components/ui'
 
 const M = '/media/navio/'
@@ -9,14 +10,9 @@ const Foto = ({ f, alt }: { f: string; alt: string }) => (
   </figure>
 )
 
-export default function NavioPage() {
-  useTitulo('O Navio')
+function TopicoNavio() {
   return (
-    <div className="pagina">
-      <CabecalhoPagina sobre="Mar" titulo="O Navio">
-        O Galeão de Carreira: construído na Marcenaria, tripulado por até quatro, armado de canhões e arpão, e sempre a um mau tempo do naufrágio.
-      </CabecalhoPagina>
-
+    <>
       <video controls preload="metadata" poster={M + 'foto_painel.jpg'} style={{ width: '100%', maxWidth: 1000, display: 'block', borderRadius: 6, background: '#000', aspectRatio: '1280/704' }}>
         <source src={M + 'navio_tybar.mp4'} type="video/mp4" />
       </video>
@@ -57,6 +53,56 @@ export default function NavioPage() {
       <h2>Tintura da vela</h2>
       <p>A vela pode ser tingida, para o navio ter a sua cor no horizonte. Use a tintura sobre o navio.</p>
 
+    </>
+  )
+}
+
+function TopicoConstrucao() {
+  return (
+    <>
+      <video controls preload="metadata" style={{ width: '100%', maxWidth: 1000, display: 'block', borderRadius: 6, background: '#000', aspectRatio: '16/9' }}>
+        <source src="/videos/construcao_mansory.mp4" type="video/mp4" />
+      </video>
+      <p>O <b>Artífice</b> com o talento <b>Pedreiro</b> (nível 2) ergue a casa no estilo do seu povo: <b>zharkianos e numajene</b> constroem em <b>madeira</b>; <b>vanírios, aquilranos e thurianos</b> em <b>pedra</b>. São <b>19 plantas por povo</b>.</p>
+      <p>Com o <b>Martelo e Sisal</b> (Funilaria, Metalworking 20) abre-se a lojinha de plantas, com miniatura e prévia. Escolhida a planta, você posiciona vendo o <b>fantasma</b> da casa no terreno.</p>
+      <p>Depois é depositar o material no <b>Baú de Obra</b>, que mostra uma barra de progresso. A obra passa por três estágios: <b>vazio, em obra e pronta</b>. O custo vai de <b>10.000 a 20.000 pedras ou toras</b>.</p>
+      <h3>Regras</h3>
+      <ul>
+        <li>Uma casa por conta.</li>
+        <li>Proibido construir a menos de 100 passos das cidades.</li>
+        <li>A <b>Pedra de Construção</b> sai em qualquer rocha (inclusive em dungeons), mas só na mineração focada.</li>
+        <li>A casa fica pronta <b>sem porta</b>: use o Kit de Porta da Marcenaria e a fechadura da Funilaria.</li>
+      </ul>
+    </>
+  )
+}
+
+/** Para adicionar um tópico novo: acrescente um item aqui. */
+const TOPICOS: { id: string; titulo: string; Corpo: () => JSX.Element }[] = [
+  { id: 'navio', titulo: 'Navio', Corpo: TopicoNavio },
+  { id: 'construcao', titulo: 'Construção (Mansory)', Corpo: TopicoConstrucao },
+]
+
+export default function FeaturesPage() {
+  useTitulo('Features')
+  const { hash } = useLocation()
+  useEffect(() => {
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView()
+  }, [hash])
+  return (
+    <div className="pagina">
+      <CabecalhoPagina sobre="Tybar" titulo="Features">
+        Sistemas próprios do shard, explicados um a um.
+      </CabecalhoPagina>
+      <nav aria-label="Tópicos" className="linha" style={{ marginBottom: 24 }}>
+        {TOPICOS.map(t => <a key={t.id} href={'#' + t.id} className="btn btn-2">{t.titulo}</a>)}
+      </nav>
+      {TOPICOS.map(t => (
+        <section key={t.id} id={t.id} style={{ marginBottom: 48 }}>
+          <h2 style={{ fontSize: '1.8em' }}>{t.titulo}</h2>
+          <t.Corpo />
+        </section>
+      ))}
       <p style={{ marginTop: 32 }}>Quer saber mais sobre ofícios e o mundo? Veja o <Link to="/codice">Códice</Link>.</p>
     </div>
   )

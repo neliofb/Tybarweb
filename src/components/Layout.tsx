@@ -35,7 +35,7 @@ export default function Layout() {
           <div className="nav-grupo">
             <NavLink to="/" end className={cls}>Início</NavLink>
             <NavLink to="/codice" className={cls}>Códice</NavLink>
-            <NavLink to="/navio" className={cls}>O Navio</NavLink>
+            <NavLink to="/features" className={cls}>Features</NavLink>
             <NavLink to="/simulador" className={cls}>Simulador</NavLink>
             <NavLink to="/builds" className={cls}>Builds</NavLink>
             <NavLink to="/faccoes" className={cls}>Facções</NavLink>
@@ -79,7 +79,7 @@ export default function Layout() {
       <footer className="rodape">
         <div style={{ marginBottom: 8 }}>
           <Link to="/codice">Códice</Link>·
-          <Link to="/navio">O Navio</Link>·
+          <Link to="/features">Features</Link>·
           <Link to="/faccoes">Facções</Link>·
           <a href={DISCORD} target="_blank" rel="noreferrer">Discord</a>·
           {LAUNCHER && <><a href={LAUNCHER}>Baixar o launcher</a>·</>}
