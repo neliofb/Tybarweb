@@ -35,6 +35,13 @@ function TopicoNavio() {
       <h2>Reparos e porão</h2>
       <p>O casco tem 300 pontos (mais com madeira boa). Quem está nos <b>Reparos</b> remenda com <b>5 tábuas</b> por tentativa, restaurando 30 de casco (falha gasta 2 tábuas), tira água com o <b>balde</b> e apaga o <b>fogo</b>. Casco abaixo da metade começa a vazar. O <b>porão</b> guarda tábuas, balas e carga, e vale como estoque para os tripulantes.</p>
 
+      <h2>O porão</h2>
+      <video controls preload="metadata" poster={M + 'porao.jpg'} style={{ width: '100%', maxWidth: 1000, display: 'block', borderRadius: 6, background: '#000', aspectRatio: '16/9' }}>
+        <source src={M + 'porao.mp4'} type="video/mp4" />
+      </video>
+      <p>Qualquer um a bordo desce pelo botão <b>Descer ao porão</b> do painel ou pelo <b>Porão</b> do menu. Isso vale até para o timoneiro, mas ele solta o leme e o navio para. O porão é montado onde o navio está e fica ali. Dentro dá para <b>andar</b>, <b>guardar baús</b> e <b>decorar</b>, e tudo fica salvo no navio. Tem <b>cama</b> para deitar, e a <b>escada de corda</b> leva de volta ao navio, onde ele estiver.</p>
+      <p>Se o navio afundar, a <b>decoração se perde</b> e o conteúdo dos baús vai para o <b>destroço</b>.</p>
+
       <h2>O bote</h2>
       <p>O navio leva um <b>bote</b> para ir à terra sem atracar: ele se afasta até <b>10 tiles</b> do navio.</p>
       <Foto f="foto_bote.jpg" alt="O bote saindo do navio" />
