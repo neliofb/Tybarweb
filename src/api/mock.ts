@@ -3,7 +3,8 @@
 // Logins de teste: "admin" (Administrator), "gm" (GameMaster), qualquer outro = jogador. Qualquer senha.
 import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { api } from './client'
-import type { Regras, Build, PedidoConta, ContaStaff, Pericia, CapituloResumo } from './site'
+import type { Regras, Build, PedidoConta, ContaStaff, Pericia, CapituloResumo, Livro } from './site'
+import { TIPOS_LIVRO } from './site'
 import bestiario from './mock-bestiario.json'
 import { mapaFauna, salvarZonasMock } from './mock-fauna'
 import receitas from '../../../tools/oficios/receitas.json'
@@ -236,6 +237,25 @@ rota('post', '/api/builds/([^/]+)/usar', m => {
   usando = m[1]
   return ok({ ok: true, usando, mensagem: 'Pronto: o próximo personagem criado nesta conta poderá usar esta build.' })
 })
+
+// livros do site
+const livros: Livro[] = [
+  { id: 'T1', titulo: 'Crônicas da Estrada Velha', estado: 'aprovado', modelo: 1, tipo: 'Livro', autor: 'Kaelthar', conta: 'kaelthar', criado: '2026-11-01T10:00:00Z', decididoPor: 'bruna', decididoEm: '2026-11-02T09:00:00Z', paginas: ['Era uma vez uma estrada que ninguém lembrava de ter construído.', 'Os mercadores diziam que ela se movia à noite.'] },
+  { id: 'T2', titulo: 'Receitas do Forno de Barro', estado: 'pendente', modelo: 0, tipo: 'Caderno de notas', autor: 'Sena', conta: 'kaelthar', criado: '2026-11-08T20:00:00Z', paginas: ['Pão de centeio: três punhados de farinha, sal e paciência.'] },
+  { id: 'T3', titulo: 'Poema sem rima', estado: 'recusado', modelo: 0, tipo: 'Caderno de notas', autor: 'Kaelthar', conta: 'kaelthar', criado: '2026-11-05T20:00:00Z', motivo: 'Texto fora do tema do mundo.', decididoPor: 'bruna', decididoEm: '2026-11-06T09:00:00Z', paginas: ['...'] },
+]
+rota('get', '/api/sessao', () => logado() ? ok({ login: usuario || 'kaelthar', nivel: 'Player', isStaff: staff(), isAdmin: admin(), personagens: [{ nome: 'Kaelthar', serial: 1001, online: false }, { nome: 'Sena', serial: 1002, online: false }] }) : falha(401, 'Entre.'))
+rota('get', '/api/livros/meus', () => ok(livros.filter(l => l.conta === 'kaelthar')))
+rota('post', '/api/livros', (_m, b: any) => {
+  if (!b.titulo?.trim()) return falha(400, 'Dê um título ao livro.')
+  if (!(b.paginas ?? []).some((p: string) => p.trim())) return falha(400, 'O livro está em branco.')
+  const t = TIPOS_LIVRO.find(x => x.id === b.modelo)!
+  livros.unshift({ id: 'T' + ++seq, titulo: b.titulo, estado: 'pendente', modelo: b.modelo, tipo: t.nome, autor: b.personagem === 1002 ? 'Sena' : 'Kaelthar', conta: 'kaelthar', criado: agora(), paginas: b.paginas })
+  return ok({ ok: true, estado: 'pendente' })
+})
+rota('get', '/api/staff/livros', () => staff() ? ok(livros) : falha(403, 'Só staff.'))
+rota('post', '/api/staff/livros/([^/]+)/aprovar', m => { const l = livros.find(x => x.id === m[1]); if (!l) return falha(404, 'Livro não encontrado.'); l.estado = 'aprovado'; l.decididoPor = usuario; l.decididoEm = agora(); return ok({ ok: true }) })
+rota('post', '/api/staff/livros/([^/]+)/recusar', (m, b) => { const l = livros.find(x => x.id === m[1]); if (!l) return falha(404, 'Livro não encontrado.'); l.estado = 'recusado'; l.motivo = b.motivo; l.decididoPor = usuario; l.decididoEm = agora(); return ok({ ok: true }) })
 
 rota('get', '/api/discord/sessao', () => ok(sessionStorage.getItem('mockDiscord')
   ? { conectado: true, discordId: '99887766554433', nome: 'viajante', avatar: null } : { conectado: false }))

@@ -32,6 +32,8 @@ const VrarkStaffPage = lazy(() => import('./pages/staff/VrarkStaffPage'))
 const EsfolarStaffPage = lazy(() => import('./pages/staff/EsfolarStaffPage'))
 const MateriaisStaffPage = lazy(() => import('./pages/staff/MateriaisStaffPage'))
 const CombateStaffPage = lazy(() => import('./pages/staff/CombateStaffPage'))
+const EscreverLivroPage = lazy(() => import('./pages/EscreverLivroPage'))
+const LivrosStaffPage = lazy(() => import('./pages/staff/LivrosStaffPage'))
 const BuildsOficiaisPage = lazy(() => import('./pages/staff/BuildsOficiaisPage'))
 
 // As páginas antigas (Painel, Facções, Guerra) têm layout próprio: ficam numa moldura para não colar no cabeçalho
@@ -71,11 +73,13 @@ export default function App() {
             <Route path="oficios" element={<SoLogado><OficiosPage /></SoLogado>} />
             <Route path="talentos" element={<TalentosPage />} />
             <Route path="staff/talentos" element={<SoStaff><TalentosPage staff /></SoStaff>} />
+            <Route path="escrever-livro" element={<SoLogado><EscreverLivroPage /></SoLogado>} />
             <Route path="minhas-builds" element={<SoLogado><MinhasBuildsPage /></SoLogado>} />
 
             <Route path="staff" element={<SoStaff><StaffHomePage /></SoStaff>} />
             <Route path="staff/pedidos" element={<SoStaff><PedidosPage /></SoStaff>} />
             <Route path="staff/jogadores" element={<SoStaff admin><JogadoresPage /></SoStaff>} />
+            <Route path="staff/livros" element={<SoStaff><LivrosStaffPage /></SoStaff>} />
             <Route path="staff/builds" element={<SoStaff><BuildsOficiaisPage /></SoStaff>} />
             <Route path="staff/combate" element={<SoStaff><CombateStaffPage /></SoStaff>} />
             <Route path="staff/materiais" element={<SoStaff><MateriaisStaffPage /></SoStaff>} />

@@ -50,6 +50,7 @@ export default function Layout() {
               <NavLink to="/oficios" className={cls}>Ofícios</NavLink>
               <NavLink to="/talentos" className={cls}>Talentos</NavLink>
               <NavLink to="/minhas-builds" className={cls}>Minhas builds</NavLink>
+              <NavLink to="/escrever-livro" className={cls}>Escrever livro</NavLink>
             </div>
           )}
           {s.staff && (

@@ -5,6 +5,7 @@ import { CabecalhoPagina, useTitulo } from '../../components/ui'
 const FERRAMENTAS: { to: string; nome: string; desc: string; admin?: boolean; externo?: boolean }[] = [
   { to: '/staff/pedidos', nome: 'Pedidos', desc: 'Aprovar ou recusar pedidos de conta.' },
   { to: '/staff/jogadores', nome: 'Contas e jogadores', desc: 'Contas, níveis e banimentos.', admin: true },
+  { to: '/staff/livros', nome: 'Livros', desc: 'Aprovar ou recusar livros escritos no site (vão para a [biblioteca do jogo).' },
   { to: '/staff/builds', nome: 'Builds oficiais', desc: 'Builds sugeridas na página de builds.' },
   { to: 'http://localhost:8765', externo: true, nome: 'Sala de Guerra', desc: 'Painel dos agentes (só no PC do dono).' },
   { to: '/staff/combate', nome: 'Registro de combate', desc: 'Dano, cura, acerto e crítico por classe, arma, armadura e magia.' },

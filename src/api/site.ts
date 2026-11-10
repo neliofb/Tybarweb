@@ -242,6 +242,27 @@ export const banir = (login: string, banido: boolean, motivo?: string) =>
   api.post('/api/staff/contas/' + enc(login) + '/ban', { banido, motivo })
 export const tornarOficial = (id: string, oficial = true) => api.post('/api/staff/builds/' + enc(id) + '/oficial', { oficial })
 
+// ── Livros escritos no site (biblioteca do jogo) ───────────────────
+export interface TipoLivro { id: number; nome: string; paginas: number }
+/** Mesmos tipos de ModeloDeLivro (Escrita/ArteDaEscrita.cs) */
+export const TIPOS_LIVRO: TipoLivro[] = [
+  { id: 0, nome: 'Caderno de notas', paginas: 8 }, { id: 1, nome: 'Livro', paginas: 20 }, { id: 2, nome: 'Livro de registros', paginas: 30 },
+  { id: 3, nome: 'Grimório', paginas: 30 }, { id: 4, nome: 'Tomo antigo', paginas: 40 },
+]
+export const MAX_TITULO_LIVRO = 60
+export const MAX_LETRAS_PAGINA = 600
+export interface Livro {
+  id: string; titulo: string; estado: 'pendente' | 'aprovado' | 'recusado'; modelo: number; tipo: string; autor: string; conta?: string
+  criado: string; decididoPor?: string; decididoEm?: string; motivo?: string; paginas: string[]
+}
+export interface Personagem { nome: string; serial: number; online?: boolean }
+export const getPersonagens = () => mapa(api.get<{ personagens?: Personagem[] }>('/api/sessao'), d => d.personagens ?? [])
+export const getMeusLivros = () => api.get<Livro[]>('/api/livros/meus')
+export const enviarLivro = (b: { titulo: string; modelo: number; personagem: number; paginas: string[] }) => api.post('/api/livros', b)
+export const getLivrosStaff = () => api.get<Livro[]>('/api/staff/livros', { params: { estado: 'todos' } })
+export const aprovarLivro = (id: string) => api.post('/api/staff/livros/' + enc(id) + '/aprovar')
+export const recusarLivro = (id: string, motivo: string) => api.post('/api/staff/livros/' + enc(id) + '/recusar', { motivo })
+
 /** Mensagem de erro amigável a partir de um erro do axios ({error} no contrato; {problemas} ao salvar build) */
 export function msgErro(e: any, padrao = 'Não foi possível falar com o servidor.'): string {
   const d = e?.response?.data
