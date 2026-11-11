@@ -4,6 +4,48 @@ import { CabecalhoPagina, Carregando, Erro, useDados, useTitulo, dataBR } from '
 
 const SELO: Record<string, string> = { pendente: 'selo-pendente', aprovado: 'selo-ok', recusado: 'selo-mal' }
 
+// Pré-visualização do texto de uma página: <b> <i> <u> e [img](http/https link) (imagem pequena, no máximo 2).
+// Qualquer outra tag aparece como texto comum. Igual ao que o jogo mostra.
+const MAX_IMAGENS = 2
+function Imagem({ url }: { url: string }) {
+  const [falhou, setFalhou] = useState(false)
+  if (falhou) return <span className="discreto" style={{ display: 'block', margin: '6px auto', width: 120, border: '1px solid currentColor', textAlign: 'center', opacity: 0.6 }}>[imagem]</span>
+  return <img src={url} alt="" referrerPolicy="no-referrer" onError={() => setFalhou(true)} style={{ display: 'block', margin: '6px auto', maxWidth: 120, maxHeight: 90 }} />
+}
+function PreviaPagina({ texto }: { texto: string }) {
+  const re = /<(\/?)([biu])>|\[img\]\((https?:\/\/[^\s()<>[\]"'@]{4,200})\)/gi
+  const nos: React.ReactNode[] = []
+  let b = false, i = false, u = false, ultimo = 0, imgs = 0, m: RegExpExecArray | null
+  const trecho = (t: string, k: number) => {
+    if (!t) return
+    nos.push(<span key={k} style={{ fontWeight: b ? 700 : undefined, fontStyle: i ? 'italic' : undefined, textDecoration: u ? 'underline' : undefined }}>{t}</span>)
+  }
+  while ((m = re.exec(texto))) {
+    trecho(texto.slice(ultimo, m.index), ultimo)
+    ultimo = m.index + m[0].length
+    if (m[2]) { const on = !m[1], c = m[2].toLowerCase(); if (c === 'b') b = on; else if (c === 'i') i = on; else u = on }
+    else if (imgs < MAX_IMAGENS) { imgs++; nos.push(<Imagem key={'i' + m.index} url={m[3]} />) }
+  }
+  trecho(texto.slice(ultimo), ultimo)
+  return <div className="entrada" style={{ whiteSpace: 'pre-wrap', minHeight: 40 }}>{nos}</div>
+}
+
+function AjudaFormatacao() {
+  return (
+    <details className="aviso" style={{ maxWidth: 760 }}>
+      <summary><b>Formatação</b> (negrito, itálico e imagem)</summary>
+      <p>Escreva assim no texto da página:</p>
+      <ul>
+        <li><code>{'<b>negrito</b>'}</code> para <b>negrito</b></li>
+        <li><code>{'<i>itálico</i>'}</code> para <i>itálico</i></li>
+        <li><code>{'<u>sublinhado</u>'}</code> para <u>sublinhado</u></li>
+        <li><code>[img](https://site.com/foto.png)</code> para uma imagem</li>
+      </ul>
+      <p className="discreto">A imagem fica pequena (cabe numa caixa de 120x90, no meio do texto) e precisa estar hospedada em algum site: use o link direto, terminando em .png, .jpg ou .gif. Até {MAX_IMAGENS} imagens por página. Outras tags são trocadas por parênteses, e as tags não contam no limite de letras.</p>
+    </details>
+  )
+}
+
 export default function EscreverLivroPage() {
   useTitulo('Escrever livro')
   const meus = useDados(getMeusLivros)
@@ -50,9 +92,11 @@ export default function EscreverLivroPage() {
             {pers.map(p => <option key={p.serial} value={p.serial}>{p.nome}</option>)}
           </select>
         </label>
+        <AjudaFormatacao />
         {paginas.map((p, i) => (
           <label className="campo" key={i}><span>Página {i + 1} ({p.length}/{MAX_LETRAS_PAGINA})</span>
             <textarea className="entrada" rows={6} value={p} maxLength={MAX_LETRAS_PAGINA} onChange={e => mudarPagina(i, e.target.value)} />
+            {/<\/?[biu]>|\[img\]\(/i.test(p) && <PreviaPagina texto={p} />}
           </label>
         ))}
         <div className="linha" style={{ gap: 8 }}>

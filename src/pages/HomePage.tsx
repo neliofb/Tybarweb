@@ -123,7 +123,7 @@ export default function HomePage() {
           <div className="passos">
             <div className="painel passo"><h3>Entre no Discord</h3><p className="texto-2">A comunidade vive lá: avisos, sugestões e a staff. É por ele que você pede a conta.</p><a className="btn btn-discord btn-p" style={{ marginTop: 12 }} href={DISCORD} target="_blank" rel="noreferrer">Abrir o Discord</a></div>
             <div className="painel passo"><h3>Peça a sua conta</h3><p className="texto-2">Entre com o Discord aqui no site, escolha login e senha e aguarde a staff aprovar.</p><Link className="btn btn-2 btn-p" style={{ marginTop: 12 }} to="/criar-conta">Criar conta</Link></div>
-            <div className="painel passo"><h3>Baixe o launcher</h3><p className="texto-2">Ele baixa e atualiza o jogo inteiro sozinho, no Windows e no Mac.</p>{LAUNCHER ? <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}><a className="btn btn-2 btn-p" href={LAUNCHER}>Baixar para Windows</a>{LAUNCHER_MAC && <a className="btn btn-2" href={LAUNCHER_MAC}>Baixar para Mac</a>}</div> : <p className="discreto" style={{ marginTop: 12 }}>O link aparece no Discord, no canal de downloads.</p>}</div>
+            <div className="painel passo"><h3>Baixe o launcher</h3><p className="texto-2">Ele baixa e atualiza o jogo inteiro sozinho, no Windows e no Mac.</p>{LAUNCHER ? <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}><a className="btn btn-2 btn-p" href={LAUNCHER}>Baixar para Windows</a>{LAUNCHER_MAC && <a className="btn btn-2 btn-p" href={LAUNCHER_MAC}>Baixar para Mac</a>}</div> : <p className="discreto" style={{ marginTop: 12 }}>O link aparece no Discord, no canal de downloads.</p>}</div>
           </div>
         </div>
       </section>
