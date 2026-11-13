@@ -1,0 +1,1257 @@
+{
+ "geradoEm": "2026-11-13",
+ "periodo": [
+  "2026-10-24",
+  "2026-11-13"
+ ],
+ "arquivos": 21,
+ "eventos": 251178,
+ "maiorCritico": {
+  "valor": 168,
+  "pedido": 168,
+  "jogador": "Mordrath Reinard",
+  "kit": "GuerreiroSanto",
+  "arma": "BastardSwordForjada",
+  "origem": "arma",
+  "critico": "Dano triplo x3",
+  "alvo": "Zumbi",
+  "alvoTipo": "TybarZombie",
+  "alvoJogador": false,
+  "data": "2026-11-12 01:07:36"
+ },
+ "maiorGolpe": {
+  "valor": 168,
+  "pedido": 168,
+  "jogador": "Mordrath Reinard",
+  "kit": "GuerreiroSanto",
+  "arma": "BastardSwordForjada",
+  "origem": "arma",
+  "critico": "Dano triplo x3",
+  "alvo": "Zumbi",
+  "alvoTipo": "TybarZombie",
+  "alvoJogador": false,
+  "data": "2026-11-12 01:07:36"
+ },
+ "kit": [
+  {
+   "chave": "CriaDaFuria",
+   "golpes": 7034,
+   "acerto": 61.4,
+   "danos": 7177,
+   "media": 13.2,
+   "crit": 3.9,
+   "max": 138,
+   "esperado": 8.1
+  },
+  {
+   "chave": "GuerreiroSanto",
+   "golpes": 7590,
+   "acerto": 70.3,
+   "danos": 5431,
+   "media": 25.7,
+   "crit": 3.9,
+   "max": 168,
+   "esperado": 18.1
+  },
+  {
+   "chave": "Berserker",
+   "golpes": 6036,
+   "acerto": 67.8,
+   "danos": 6783,
+   "media": 23.7,
+   "crit": 2.4,
+   "max": 156,
+   "esperado": 16.1
+  },
+  {
+   "chave": "FortitudeDoUrso",
+   "golpes": 5847,
+   "acerto": 52.7,
+   "danos": 4106,
+   "media": 28.9,
+   "crit": 5.8,
+   "max": 146,
+   "esperado": 15.2
+  },
+  {
+   "chave": "DefensorDoReino",
+   "golpes": 5601,
+   "acerto": 52.0,
+   "danos": 4348,
+   "media": 18.2,
+   "crit": 5.5,
+   "max": 84,
+   "esperado": 9.5
+  },
+  {
+   "chave": "AcolitoDoPanteao",
+   "golpes": 2991,
+   "acerto": 43.1,
+   "danos": 1856,
+   "media": 6.8,
+   "crit": 1.6,
+   "max": 17,
+   "esperado": 2.9
+  },
+  {
+   "chave": "Totemista",
+   "golpes": 1464,
+   "acerto": 50.5,
+   "danos": 899,
+   "media": 4.1,
+   "crit": 0.0,
+   "max": 14,
+   "esperado": 2.1
+  },
+  {
+   "chave": "Artifice",
+   "golpes": 1370,
+   "acerto": 38.7,
+   "danos": 912,
+   "media": 15.3,
+   "crit": 1.9,
+   "max": 68,
+   "esperado": 5.9
+  },
+  {
+   "chave": "Bandido",
+   "golpes": 1029,
+   "acerto": 66.9,
+   "danos": 932,
+   "media": 17.2,
+   "crit": 3.0,
+   "max": 49,
+   "esperado": 11.5
+  },
+  {
+   "chave": "MagoDeCombate",
+   "golpes": 1246,
+   "acerto": 48.8,
+   "danos": 545,
+   "media": 21.0,
+   "crit": 0.7,
+   "max": 53,
+   "esperado": 10.3
+  },
+  {
+   "chave": "MembroDaNobreza",
+   "golpes": 331,
+   "acerto": 77.9,
+   "danos": 254,
+   "media": 24.7,
+   "crit": 5.1,
+   "max": 54,
+   "esperado": 19.3
+  },
+  {
+   "chave": "Shimoriano",
+   "golpes": 356,
+   "acerto": 8.1,
+   "danos": 67,
+   "media": 2.1,
+   "crit": 0.0,
+   "max": 10,
+   "esperado": 0.2
+  },
+  {
+   "chave": "Corpulento",
+   "golpes": 208,
+   "acerto": 53.8,
+   "danos": 111,
+   "media": 23.4,
+   "crit": 0.0,
+   "max": 35,
+   "esperado": 12.6
+  },
+  {
+   "chave": "Ranger",
+   "golpes": 285,
+   "acerto": 54.4,
+   "danos": 28,
+   "media": 9.5,
+   "crit": 3.6,
+   "max": 36,
+   "esperado": 5.2
+  },
+  {
+   "chave": "ReflexosDePantera",
+   "golpes": 132,
+   "acerto": 73.5,
+   "danos": 97,
+   "media": 17.7,
+   "crit": 0.0,
+   "max": 35,
+   "esperado": 13.0
+  },
+  {
+   "chave": "None",
+   "golpes": 77,
+   "acerto": 100.0,
+   "danos": 65,
+   "media": 12.3,
+   "crit": 1.5,
+   "max": 45,
+   "esperado": 12.3
+  },
+  {
+   "chave": "Mesumbeiro",
+   "golpes": 127,
+   "acerto": 0.8,
+   "danos": 1,
+   "media": 2.0,
+   "crit": 0.0,
+   "max": 2,
+   "esperado": 0.0
+  }
+ ],
+ "classe": [
+  {
+   "chave": "None",
+   "golpes": 19389,
+   "acerto": 63.2,
+   "danos": 15977,
+   "media": 21.7,
+   "crit": 3.0,
+   "max": 168,
+   "esperado": 13.7
+  },
+  {
+   "chave": "Combatente",
+   "golpes": 9317,
+   "acerto": 56.8,
+   "danos": 7794,
+   "media": 20.3,
+   "crit": 4.5,
+   "max": 146,
+   "esperado": 11.5
+  },
+  {
+   "chave": "Escudeiro",
+   "golpes": 6387,
+   "acerto": 53.5,
+   "danos": 4851,
+   "media": 18.3,
+   "crit": 4.9,
+   "max": 84,
+   "esperado": 9.8
+  },
+  {
+   "chave": "SacerdoteDePanteao",
+   "golpes": 2382,
+   "acerto": 49.3,
+   "danos": 1246,
+   "media": 8.9,
+   "crit": 2.1,
+   "max": 17,
+   "esperado": 4.4
+  },
+  {
+   "chave": "AgenteDasSombras",
+   "golpes": 1360,
+   "acerto": 69.6,
+   "danos": 1186,
+   "media": 18.8,
+   "crit": 3.5,
+   "max": 54,
+   "esperado": 13.1
+  },
+  {
+   "chave": "Metalurgo",
+   "golpes": 1046,
+   "acerto": 39.9,
+   "danos": 774,
+   "media": 12.9,
+   "crit": 2.2,
+   "max": 66,
+   "esperado": 5.1
+  },
+  {
+   "chave": "CriaDaFuria",
+   "golpes": 539,
+   "acerto": 70.9,
+   "danos": 795,
+   "media": 19.8,
+   "crit": 7.5,
+   "max": 138,
+   "esperado": 14.1
+  },
+  {
+   "chave": "Sacerdote",
+   "golpes": 586,
+   "acerto": 19.3,
+   "danos": 606,
+   "media": 2.5,
+   "crit": 0.7,
+   "max": 17,
+   "esperado": 0.5
+  },
+  {
+   "chave": "Kitahnes",
+   "golpes": 646,
+   "acerto": 52.3,
+   "danos": 347,
+   "media": 21.8,
+   "crit": 0.3,
+   "max": 53,
+   "esperado": 11.4
+  },
+  {
+   "chave": "Mesumbeiro",
+   "golpes": 76,
+   "acerto": 0.0,
+   "danos": 38,
+   "media": 1.2,
+   "crit": 0.0,
+   "max": 4,
+   "esperado": 0.0
+  }
+ ],
+ "arma": [
+  {
+   "chave": "BastardSwordForjada",
+   "golpes": 5765,
+   "acerto": 69.9,
+   "danos": 6527,
+   "media": 24.3,
+   "crit": 2.8,
+   "max": 168,
+   "esperado": 17.0
+  },
+  {
+   "chave": "VikingSwordForjada",
+   "golpes": 6543,
+   "acerto": 53.4,
+   "danos": 4907,
+   "media": 18.7,
+   "crit": 5.6,
+   "max": 84,
+   "esperado": 10.0
+  },
+  {
+   "chave": "HalberdForjada",
+   "golpes": 6237,
+   "acerto": 54.1,
+   "danos": 4374,
+   "media": 29.3,
+   "crit": 5.7,
+   "max": 146,
+   "esperado": 15.8
+  },
+  {
+   "chave": "CajadoDeMadeira",
+   "golpes": 4783,
+   "acerto": 47.4,
+   "danos": 3658,
+   "media": 8.6,
+   "crit": 3.1,
+   "max": 36,
+   "esperado": 4.1
+  },
+  {
+   "chave": "Fists",
+   "golpes": 4072,
+   "acerto": 49.7,
+   "danos": 3082,
+   "media": 5.5,
+   "crit": 0.0,
+   "max": 90,
+   "esperado": 2.7
+  },
+  {
+   "chave": "LongswordForjada",
+   "golpes": 3588,
+   "acerto": 69.0,
+   "danos": 2770,
+   "media": 22.0,
+   "crit": 3.8,
+   "max": 64,
+   "esperado": 15.2
+  },
+  {
+   "chave": "ExecutionersAxeForjada",
+   "golpes": 1899,
+   "acerto": 63.2,
+   "danos": 1197,
+   "media": 31.3,
+   "crit": 2.3,
+   "max": 69,
+   "esperado": 19.8
+  },
+  {
+   "chave": "CrescentBladeForjada",
+   "golpes": 1575,
+   "acerto": 49.6,
+   "danos": 1138,
+   "media": 17.2,
+   "crit": 2.8,
+   "max": 73,
+   "esperado": 8.5
+  },
+  {
+   "chave": "WarHammerForjada",
+   "golpes": 1019,
+   "acerto": 69.3,
+   "danos": 1499,
+   "media": 21.2,
+   "crit": 0.8,
+   "max": 126,
+   "esperado": 14.7
+  },
+  {
+   "chave": "ShortSpearForjada",
+   "golpes": 946,
+   "acerto": 88.8,
+   "danos": 840,
+   "media": 19.6,
+   "crit": 5.8,
+   "max": 36,
+   "esperado": 17.4
+  },
+  {
+   "chave": "KatanaForjada",
+   "golpes": 886,
+   "acerto": 65.5,
+   "danos": 718,
+   "media": 17.2,
+   "crit": 3.2,
+   "max": 49,
+   "esperado": 11.3
+  },
+  {
+   "chave": "WarAxeForjada",
+   "golpes": 920,
+   "acerto": 56.5,
+   "danos": 520,
+   "media": 20.9,
+   "crit": 4.0,
+   "max": 50,
+   "esperado": 11.8
+  },
+  {
+   "chave": "DaishoForjada",
+   "golpes": 415,
+   "acerto": 69.6,
+   "danos": 605,
+   "media": 17.9,
+   "crit": 6.8,
+   "max": 72,
+   "esperado": 12.4
+  },
+  {
+   "chave": "ArcoDeMadeira",
+   "golpes": 840,
+   "acerto": 40.8,
+   "danos": 109,
+   "media": 7.0,
+   "crit": 0.0,
+   "max": 30,
+   "esperado": 2.9
+  },
+  {
+   "chave": "GarrasTotem",
+   "golpes": 396,
+   "acerto": 76.3,
+   "danos": 327,
+   "media": 7.6,
+   "crit": 0.0,
+   "max": 14,
+   "esperado": 5.8
+  },
+  {
+   "chave": "BoneHarvesterForjada",
+   "golpes": 253,
+   "acerto": 61.7,
+   "danos": 273,
+   "media": 17.5,
+   "crit": 5.9,
+   "max": 66,
+   "esperado": 10.8
+  },
+  {
+   "chave": "WarMaceForjada",
+   "golpes": 298,
+   "acerto": 65.8,
+   "danos": 196,
+   "media": 22.6,
+   "crit": 6.1,
+   "max": 37,
+   "esperado": 14.8
+  },
+  {
+   "chave": "HeavyOrnateAxe",
+   "golpes": 198,
+   "acerto": 64.1,
+   "danos": 172,
+   "media": 28.4,
+   "crit": 5.8,
+   "max": 117,
+   "esperado": 18.2
+  },
+  {
+   "chave": "Kama",
+   "golpes": 194,
+   "acerto": 64.4,
+   "danos": 175,
+   "media": 23.8,
+   "crit": 17.7,
+   "max": 76,
+   "esperado": 15.3
+  },
+  {
+   "chave": "DaggerForjada",
+   "golpes": 201,
+   "acerto": 71.6,
+   "danos": 143,
+   "media": 18.4,
+   "crit": 2.8,
+   "max": 41,
+   "esperado": 13.2
+  },
+  {
+   "chave": "Daisho",
+   "golpes": 115,
+   "acerto": 80.9,
+   "danos": 89,
+   "media": 37.9,
+   "crit": 0.0,
+   "max": 57,
+   "esperado": 30.6
+  },
+  {
+   "chave": "RaedsGlory",
+   "golpes": 62,
+   "acerto": 77.4,
+   "danos": 48,
+   "media": 49.2,
+   "crit": 0.0,
+   "max": 60,
+   "esperado": 38.1
+  },
+  {
+   "chave": "CajadoEscuro",
+   "golpes": 46,
+   "acerto": 58.7,
+   "danos": 64,
+   "media": 15.2,
+   "crit": 10.9,
+   "max": 49,
+   "esperado": 8.9
+  },
+  {
+   "chave": "BestaPesada",
+   "golpes": 101,
+   "acerto": 55.4,
+   "danos": 0,
+   "media": null,
+   "crit": null,
+   "max": 0,
+   "esperado": null
+  },
+  {
+   "chave": "SkinningKnifeCustom",
+   "golpes": 61,
+   "acerto": 21.3,
+   "danos": 39,
+   "media": 6.5,
+   "crit": 2.6,
+   "max": 18,
+   "esperado": 1.4
+  },
+  {
+   "chave": "DoubleBladedStaffForjada",
+   "golpes": 41,
+   "acerto": 56.1,
+   "danos": 48,
+   "media": 20.1,
+   "crit": 12.5,
+   "max": 56,
+   "esperado": 11.3
+  },
+  {
+   "chave": "ScytheForjada",
+   "golpes": 57,
+   "acerto": 43.9,
+   "danos": 31,
+   "media": 18.6,
+   "crit": 0.0,
+   "max": 44,
+   "esperado": 8.1
+  },
+  {
+   "chave": "DoubleAxeForjada",
+   "golpes": 70,
+   "acerto": 24.3,
+   "danos": 17,
+   "media": 28.0,
+   "crit": 0.0,
+   "max": 33,
+   "esperado": 6.8
+  },
+  {
+   "chave": "ThunderingAxe",
+   "golpes": 39,
+   "acerto": 66.7,
+   "danos": 26,
+   "media": 76.1,
+   "crit": 0.0,
+   "max": 92,
+   "esperado": 50.7
+  },
+  {
+   "chave": "RadiantScimitarForjada",
+   "golpes": 44,
+   "acerto": 25.0,
+   "danos": 11,
+   "media": 15.6,
+   "crit": 0.0,
+   "max": 18,
+   "esperado": 3.9
+  }
+ ],
+ "estilo": [
+  {
+   "chave": "2H",
+   "golpes": 23169,
+   "acerto": 59.8,
+   "danos": 20368,
+   "media": 22.1,
+   "crit": 3.8,
+   "max": 168,
+   "esperado": 13.2
+  },
+  {
+   "chave": "1H",
+   "golpes": 13023,
+   "acerto": 59.8,
+   "danos": 9806,
+   "media": 19.2,
+   "crit": 4.7,
+   "max": 84,
+   "esperado": 11.5
+  },
+  {
+   "chave": "Luta",
+   "golpes": 4072,
+   "acerto": 49.7,
+   "danos": 3082,
+   "media": 5.5,
+   "crit": 0.0,
+   "max": 90,
+   "esperado": 2.7
+  },
+  {
+   "chave": "Distancia",
+   "golpes": 958,
+   "acerto": 41.2,
+   "danos": 109,
+   "media": 7.0,
+   "crit": 0.0,
+   "max": 30,
+   "esperado": 2.9
+  },
+  {
+   "chave": "?",
+   "golpes": 506,
+   "acerto": 53.0,
+   "danos": 249,
+   "media": 22.5,
+   "crit": 0.0,
+   "max": 52,
+   "esperado": 11.9
+  }
+ ],
+ "pericia": [
+  {
+   "chave": "MeleeCombat2H",
+   "golpes": 23523,
+   "acerto": 59.6,
+   "danos": 0,
+   "media": null,
+   "crit": null,
+   "max": 0,
+   "esperado": null
+  },
+  {
+   "chave": "MeleeCombat1H",
+   "golpes": 12750,
+   "acerto": 59.4,
+   "danos": 0,
+   "media": null,
+   "crit": null,
+   "max": 0,
+   "esperado": null
+  },
+  {
+   "chave": "Wrestling",
+   "golpes": 4072,
+   "acerto": 49.7,
+   "danos": 0,
+   "media": null,
+   "crit": null,
+   "max": 0,
+   "esperado": null
+  },
+  {
+   "chave": "RangedCombat",
+   "golpes": 987,
+   "acerto": 41.7,
+   "danos": 0,
+   "media": null,
+   "crit": null,
+   "max": 0,
+   "esperado": null
+  },
+  {
+   "chave": "Magery",
+   "golpes": 396,
+   "acerto": 76.3,
+   "danos": 0,
+   "media": null,
+   "crit": null,
+   "max": 0,
+   "esperado": null
+  }
+ ],
+ "curas": [
+  {
+   "chave": "Medicina:Bandagem",
+   "n": 7735,
+   "media": 3.3,
+   "total": 25870,
+   "aproveitamento": 99.2
+  },
+  {
+   "chave": "Mesum:mesum_siphon_life",
+   "n": 1020,
+   "media": 20.4,
+   "total": 20812,
+   "aproveitamento": 76.9
+  },
+  {
+   "chave": "Clerigo:cleric_heal",
+   "n": 260,
+   "media": 61.2,
+   "total": 15920,
+   "aproveitamento": 61.7
+  },
+  {
+   "chave": "Mesum:mesum_sangria",
+   "n": 840,
+   "media": 11.9,
+   "total": 9959,
+   "aproveitamento": 94.0
+  },
+  {
+   "chave": "Clerigo:cleric_rest",
+   "n": 2243,
+   "media": 1.3,
+   "total": 2892,
+   "aproveitamento": 31.2
+  },
+  {
+   "chave": "Alquimia:PocaoDeCura",
+   "n": 314,
+   "media": 2.7,
+   "total": 857,
+   "aproveitamento": 99.4
+  },
+  {
+   "chave": "?",
+   "n": 287,
+   "media": 2.3,
+   "total": 653,
+   "aproveitamento": 85.1
+  },
+  {
+   "chave": "Talento:SeloDaRuina",
+   "n": 59,
+   "media": 9.2,
+   "total": 540,
+   "aproveitamento": 45.8
+  },
+  {
+   "chave": "Mesum:mesum_agonize",
+   "n": 34,
+   "media": 1.7,
+   "total": 57,
+   "aproveitamento": 83.8
+  },
+  {
+   "chave": "Clerigo:cleric_purge",
+   "n": 288,
+   "media": 0.2,
+   "total": 56,
+   "aproveitamento": 0.7
+  }
+ ],
+ "curaPorKit": [
+  {
+   "chave": "Shimoriano",
+   "n": 3176,
+   "total": 25058,
+   "media": 7.9
+  },
+  {
+   "chave": "Mesumbeiro",
+   "n": 592,
+   "total": 10902,
+   "media": 18.4
+  },
+  {
+   "chave": "AcolitoDoPanteao",
+   "n": 1663,
+   "total": 10786,
+   "media": 6.5
+  },
+  {
+   "chave": "FortitudeDoUrso",
+   "n": 1972,
+   "total": 7304,
+   "media": 3.7
+  },
+  {
+   "chave": "GuerreiroSanto",
+   "n": 898,
+   "total": 6615,
+   "media": 7.4
+  },
+  {
+   "chave": "Berserker",
+   "n": 1423,
+   "total": 5218,
+   "media": 3.7
+  },
+  {
+   "chave": "DefensorDoReino",
+   "n": 949,
+   "total": 5108,
+   "media": 5.4
+  },
+  {
+   "chave": "CriaDaFuria",
+   "n": 1202,
+   "total": 3402,
+   "media": 2.8
+  },
+  {
+   "chave": "Bandido",
+   "n": 323,
+   "total": 948,
+   "media": 2.9
+  },
+  {
+   "chave": "Totemista",
+   "n": 198,
+   "total": 599,
+   "media": 3.0
+  },
+  {
+   "chave": "MembroDaNobreza",
+   "n": 61,
+   "total": 182,
+   "media": 3.0
+  },
+  {
+   "chave": "Artifice",
+   "n": 162,
+   "total": 161,
+   "media": 1.0
+  },
+  {
+   "chave": "MagoDeCombate",
+   "n": 46,
+   "total": 145,
+   "media": 3.2
+  },
+  {
+   "chave": "None",
+   "n": 7,
+   "total": 62,
+   "media": 8.9
+  },
+  {
+   "chave": "Ranger",
+   "n": 10,
+   "total": 29,
+   "media": 2.9
+  }
+ ],
+ "acoes": [
+  {
+   "chave": "Mesum:mesum_agonize",
+   "n": 2078,
+   "sucesso": 93.5
+  },
+  {
+   "chave": "Clerigo:cleric_heal",
+   "n": 1973,
+   "sucesso": 94.3
+  },
+  {
+   "chave": "Kitah:fire_burst",
+   "n": 1306,
+   "sucesso": 76.3
+  },
+  {
+   "chave": "Clerigo:cleric_protection",
+   "n": 1229,
+   "sucesso": 70.5
+  },
+  {
+   "chave": "Mesum:mesum_sangria",
+   "n": 1187,
+   "sucesso": 89.4
+  },
+  {
+   "chave": "Clerigo:cleric_sanctuary",
+   "n": 1166,
+   "sucesso": 50.4
+  },
+  {
+   "chave": "Clerigo:cleric_purge",
+   "n": 866,
+   "sucesso": 38.3
+  },
+  {
+   "chave": "Mesum:mesum_siphon_life",
+   "n": 759,
+   "sucesso": 83.4
+  },
+  {
+   "chave": "Clerigo:cleric_armor",
+   "n": 705,
+   "sucesso": 94.6
+  },
+  {
+   "chave": "Mesum:mesum_grave_chill",
+   "n": 689,
+   "sucesso": 83.9
+  },
+  {
+   "chave": "Talento:TecnicaDeBatalha",
+   "n": 669,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Mesum:mesum_corpse_skin",
+   "n": 635,
+   "sucesso": 94.2
+  },
+  {
+   "chave": "Navio:Canhao",
+   "n": 417,
+   "sucesso": 65.5
+  },
+  {
+   "chave": "Clerigo:cleric_holy_light",
+   "n": 364,
+   "sucesso": 51.4
+  },
+  {
+   "chave": "Totemista:totem_cura_floresta",
+   "n": 336,
+   "sucesso": 90.8
+  },
+  {
+   "chave": "Clerigo:cleric_buff_str_3",
+   "n": 288,
+   "sucesso": 69.8
+  },
+  {
+   "chave": "Totemista:tt_bencao_ancestral",
+   "n": 230,
+   "sucesso": 56.1
+  },
+  {
+   "chave": "Clerigo:cleric_repair_simple",
+   "n": 225,
+   "sucesso": 95.6
+  },
+  {
+   "chave": "Mesum:mesum_debilitate",
+   "n": 215,
+   "sucesso": 75.3
+  },
+  {
+   "chave": "Talento:DefesaPerfeita",
+   "n": 188,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Talento:GuardaInstintiva:Aparou",
+   "n": 182,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Talento:DefesaPerfeita:Defendeu",
+   "n": 175,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Kitah:earth_crush",
+   "n": 175,
+   "sucesso": 76.0
+  },
+  {
+   "chave": "Mesum:mesum_curse",
+   "n": 169,
+   "sucesso": 92.3
+  },
+  {
+   "chave": "Clerigo:cleric_accuracy",
+   "n": 150,
+   "sucesso": 95.3
+  },
+  {
+   "chave": "Talento:CasuloDeFerro:Defendeu",
+   "n": 133,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Talento:Esquiva",
+   "n": 130,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Mesum:mesum_erguer_mortos",
+   "n": 130,
+   "sucesso": 78.5
+  },
+  {
+   "chave": "Kitah:earth_bind",
+   "n": 120,
+   "sucesso": 55.0
+  },
+  {
+   "chave": "Clerigo:cleric_bless_weapon",
+   "n": 110,
+   "sucesso": 51.8
+  },
+  {
+   "chave": "Totemista:tt_escamarubra",
+   "n": 101,
+   "sucesso": 99.0
+  },
+  {
+   "chave": "Kitah:water_chill",
+   "n": 87,
+   "sucesso": 73.6
+  },
+  {
+   "chave": "Kitah:air_spark",
+   "n": 86,
+   "sucesso": 66.3
+  },
+  {
+   "chave": "Totemista:tt_sangue_ofidico",
+   "n": 85,
+   "sucesso": 97.6
+  },
+  {
+   "chave": "Berserker:golpeesmagador",
+   "n": 82,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Talento:SeloDaRuina:Atordoar",
+   "n": 78,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Talento:Investida",
+   "n": 76,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Talento:Esquiva:Esquivou",
+   "n": 69,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Mesum:mesum_bone_shield",
+   "n": 61,
+   "sucesso": 100.0
+  },
+  {
+   "chave": "Totemista:tt_remige",
+   "n": 45,
+   "sucesso": 100.0
+  }
+ ],
+ "mortes": [
+  {
+   "chave": "Jogador mata Monstro",
+   "n": 6955
+  },
+  {
+   "chave": "Pet mata Monstro",
+   "n": 1127
+  },
+  {
+   "chave": "Monstro mata Jogador",
+   "n": 281
+  },
+  {
+   "chave": "Monstro mata Pet",
+   "n": 65
+  },
+  {
+   "chave": "Jogador mata Pet",
+   "n": 6
+  },
+  {
+   "chave": "Jogador mata Jogador",
+   "n": 6
+  },
+  {
+   "chave": "Pet mata Jogador",
+   "n": 1
+  }
+ ],
+ "pvp": [
+  {
+   "chave": "Jose (MembroDaNobreza) -> Jose (MembroDaNobreza)",
+   "n": 3
+  },
+  {
+   "chave": "Eliam (Shimoriano) -> Alef Maister (Bandido)",
+   "n": 1
+  },
+  {
+   "chave": "Alef Maister (Bandido) -> Eliam (Shimoriano)",
+   "n": 1
+  },
+  {
+   "chave": "Desconhecido (Artifice) -> Desconhecido (Artifice)",
+   "n": 1
+  }
+ ],
+ "matadoresDeJogador": [
+  {
+   "chave": "TybarMesumbeiro",
+   "n": 76
+  },
+  {
+   "chave": "TybarBanditSword",
+   "n": 23
+  },
+  {
+   "chave": "TybarZombie",
+   "n": 18
+  },
+  {
+   "chave": "TybarThiefParry",
+   "n": 17
+  },
+  {
+   "chave": "TybarWarg",
+   "n": 12
+  },
+  {
+   "chave": "TybarLobo",
+   "n": 11
+  },
+  {
+   "chave": "TybarHarpy",
+   "n": 11
+  },
+  {
+   "chave": "Bogling",
+   "n": 9
+  },
+  {
+   "chave": "TybarSkeleton",
+   "n": 9
+  },
+  {
+   "chave": "TybarLich",
+   "n": 8
+  },
+  {
+   "chave": "ZharkiaGuardHeavy",
+   "n": 6
+  },
+  {
+   "chave": "TybarMercHeavySword",
+   "n": 6
+  },
+  {
+   "chave": "AligatorDoSepulcro",
+   "n": 6
+  },
+  {
+   "chave": "CapangaDaVoz",
+   "n": 6
+  },
+  {
+   "chave": "TybarFantasma",
+   "n": 5
+  }
+ ],
+ "mortesPorKit": [
+  {
+   "chave": "CriaDaFuria",
+   "n": 66
+  },
+  {
+   "chave": "Shimoriano",
+   "n": 64
+  },
+  {
+   "chave": "Totemista",
+   "n": 24
+  },
+  {
+   "chave": "Mesumbeiro",
+   "n": 23
+  },
+  {
+   "chave": "FortitudeDoUrso",
+   "n": 20
+  },
+  {
+   "chave": "GuerreiroSanto",
+   "n": 20
+  },
+  {
+   "chave": "AcolitoDoPanteao",
+   "n": 18
+  },
+  {
+   "chave": "Berserker",
+   "n": 15
+  },
+  {
+   "chave": "DefensorDoReino",
+   "n": 10
+  },
+  {
+   "chave": "MagoDeCombate",
+   "n": 7
+  },
+  {
+   "chave": "Bandido",
+   "n": 7
+  },
+  {
+   "chave": "MembroDaNobreza",
+   "n": 7
+  },
+  {
+   "chave": "Corpulento",
+   "n": 3
+  },
+  {
+   "chave": "Artifice",
+   "n": 2
+  },
+  {
+   "chave": "Ranger",
+   "n": 1
+  },
+  {
+   "chave": "Nenhuma",
+   "n": 1
+  }
+ ]
+}

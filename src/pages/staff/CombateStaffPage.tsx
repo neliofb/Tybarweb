@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { getCombate, DimCombate, LinhaCombate, StatsCombate } from '../../api/combate'
 import { msgErro } from '../../api/site'
+import AnaliseBalanceamento from './AnaliseBalanceamento'
+import EquilibrioCombate from './EquilibrioCombate'
 import { CabecalhoPagina, Carregando, Erro, useTitulo } from '../../components/ui'
 
 const DIMS: { id: DimCombate; nome: string }[] = [
@@ -81,6 +83,8 @@ export default function CombateStaffPage() {
           </table>
         </div>
       )}
+      <AnaliseBalanceamento />
+      <EquilibrioCombate />
       <div className="painel painel-fino">
         <h3 style={{ marginTop: 0 }}>Como ler</h3>
         <ul className="discreto" style={{ margin: 0 }}>
