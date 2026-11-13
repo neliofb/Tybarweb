@@ -21,6 +21,7 @@ const FaccoesLorePage = lazy(() => import('./pages/FaccoesLorePage'))
 const FaccaoPage = lazy(() => import('./pages/FaccaoPage'))
 const LoreSituacaoPage = lazy(() => import('./pages/LoreSituacaoPage'))
 const WarPage = lazy(() => import('./pages/WarPage'))
+const DungeonsStaffPage = lazy(() => import('./pages/staff/DungeonsStaffPage'))
 const StaffHomePage = lazy(() => import('./pages/staff/StaffHomePage'))
 const PedidosPage = lazy(() => import('./pages/staff/PedidosPage'))
 const JogadoresPage = lazy(() => import('./pages/staff/JogadoresPage'))
@@ -82,6 +83,7 @@ export default function App() {
             <Route path="staff/livros" element={<SoStaff><LivrosStaffPage /></SoStaff>} />
             <Route path="staff/builds" element={<SoStaff><BuildsOficiaisPage /></SoStaff>} />
             <Route path="staff/combate" element={<SoStaff><CombateStaffPage /></SoStaff>} />
+            <Route path="staff/dungeons" element={<SoStaff><DungeonsStaffPage /></SoStaff>} />
             <Route path="staff/materiais" element={<SoStaff><MateriaisStaffPage /></SoStaff>} />
             <Route path="staff/fauna" element={<SoStaff><FaunaStaffPage /></SoStaff>} />
             <Route path="staff/coleta" element={<SoStaff><ColetaStaffPage /></SoStaff>} />

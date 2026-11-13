@@ -84,10 +84,36 @@ function TopicoConstrucao() {
   )
 }
 
+function TopicoMissoesWorkers() {
+  return (
+    <>
+      <video controls preload="metadata" style={{ width: '100%', maxWidth: 1000, display: 'block', borderRadius: 6, background: '#000', aspectRatio: '16/9' }}>
+        <source src="/videos/missao_ferreiro_guarda.mp4" type="video/mp4" />
+      </video>
+      <p>Os ofícios também têm <b>turnos de serviço</b>. Na <b>Oficina da Guarda</b>, ao lado do quartel de Zharkia, o ferreiro (Metalworking 20+) assume o posto com dois cliques no <b>Livro de Serviço</b>, e o turno dura <b>1 hora</b>.</p>
+      <p>Os <b>soldados</b> chegam pelo portão, fazem fila no balcão e pedem de <b>1 a 3 peças</b> da forja, do nível do ferreiro. Cada pedido tem <b>5 minutos</b>. Você forja na oficina, com o material dos baús, e entrega com dois cliques no soldado.</p>
+      <h3>Recompensas</h3>
+      <ul>
+        <li><b>6 cobres por peça</b>, pagos no fim do turno.</li>
+        <li><b>+0,1 de Metalworking</b> por peça entregue (até 20 por turno).</li>
+        <li>As peças <b>excepcionais</b> do turno trocam por um <b>Pergaminho de Talento</b> (1 por turno).</li>
+      </ul>
+      <h3>Regras</h3>
+      <ul>
+        <li>Um ferreiro por vez; depois do turno, 3 horas de descanso.</li>
+        <li>Tudo da oficina leva <b>[Oficina]</b> no nome e some ao sair, deslogar ou acabar o turno.</li>
+        <li>5 minutos parado ou fora da oficina encerra o turno.</li>
+      </ul>
+      <p>O <b>Estaleiro de Turno</b> faz o mesmo para a <b>marcenaria</b>: reparos e peças de madeira para os navios.</p>
+    </>
+  )
+}
+
 /** Para adicionar um tópico novo: acrescente um item aqui. */
 const TOPICOS: { id: string; titulo: string; Corpo: () => JSX.Element }[] = [
   { id: 'navio', titulo: 'Navio', Corpo: TopicoNavio },
   { id: 'construcao', titulo: 'Construção (Mansory)', Corpo: TopicoConstrucao },
+  { id: 'missoes', titulo: 'Missões para workers', Corpo: TopicoMissoesWorkers },
 ]
 
 export default function FeaturesPage() {
