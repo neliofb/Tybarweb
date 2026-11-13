@@ -5,7 +5,7 @@ import { getBuild, getRegras, usarBuild, apagarBuild, tornarOficial, msgErro } f
 import { useSessao } from '../auth'
 import { CabecalhoPagina, Carregando, Erro, Midia, Modal, Selo, useDados, useTitulo, dataBR } from '../components/ui'
 import { fontesBuild } from '../components/BuildCard'
-import { custoPericia, nomeDe, pontosGastos, pontosTotais, problemas, tiersDe } from '../ficha'
+import { avisoConversao, custoPericia, nomeDe, pontosGastos, pontosTotais, problemas, tiersDe, vocacaoTracoDe } from '../ficha'
 
 export default function BuildDetalhePage() {
   const { id = '' } = useParams()
@@ -22,6 +22,9 @@ export default function BuildDetalhePage() {
   if (build.erro || !b) return <div className="pagina"><Erro erro={build.erro || 'Build não encontrada.'} tentar={build.carregar} /></div>
 
   const tiers = r ? tiersDe(r) : []
+  const vt = vocacaoTracoDe(r, b)
+  const voc = r?.vocacoes.find(v => v.id === vt.vocacao)
+  const aviso = avisoConversao(r, b)
   const probs = r ? problemas(r, b) : []
   const podeEditar = b.minha || s.staff
 
@@ -50,6 +53,7 @@ export default function BuildDetalhePage() {
           </div>
           {s.logado ? <ComoUsarBuild /> : <p className="discreto">Entre com a conta do jogo para marcar esta build e usá-la na criação do seu próximo personagem.</p>}
           {msg && <div className={'aviso ' + (msg.ok ? 'aviso-ok' : 'aviso-erro')} role="status" style={{ marginBottom: 18 }}>{msg.t}</div>}
+          {aviso && <div className="aviso aviso-info" style={{ marginBottom: 18 }}>{aviso}</div>}
           {probs.length > 0 && <div className="aviso aviso-erro" style={{ marginBottom: 18 }}>Esta build não fecha com as regras atuais: {probs.join(' ')}</div>}
 
           <div className="grade grade-2">
@@ -59,7 +63,9 @@ export default function BuildDetalhePage() {
                 <li><span>Povo</span><span>{nomeDe(r?.povos, b.povo)}</span></li>
                 {b.vantagem && <li><span>Vantagem</span><span>{nomeDe(r?.vantagens, b.vantagem)}</span></li>}
                 <li><span>Caminho</span><span>{nomeDe(r?.caminhos, b.caminho)}</span></li>
-                <li><span>Kit</span><span>{nomeDe(r?.kits, b.kit)}</span></li>
+                <li><span>Vocação</span><span>{voc?.nome ?? '—'}</span></li>
+                {b.linha && <li><span>Linha</span><span>{nomeDe(voc?.linhas, b.linha)}</span></li>}
+                <li><span>Traço</span><span>{nomeDe(r?.tracos, vt.traco)}</span></li>
                 <li><span>Estilo</span><span>{b.estilo || '—'}</span></li>
                 {b.atributos && <>
                   <li><span>Força</span><span>{b.atributos.str}</span></li>
@@ -70,11 +76,11 @@ export default function BuildDetalhePage() {
             </section>
             <section className="painel">
               <h3>Perícias</h3>
-              {r && <p className="discreto" style={{ marginBottom: 6 }}>{pontosGastos(r, b.pericias ?? {}, b.caminho, b.kit)} de {pontosTotais(r, b.kit, b.vantagem)} pontos</p>}
+              {r && <p className="discreto" style={{ marginBottom: 6 }}>{pontosGastos(r, b.pericias ?? {}, b.caminho, vt.vocacao, vt.traco)} de {pontosTotais(r, vt.vocacao, vt.traco, b.vantagem)} pontos</p>}
               <ul className="resumo-lista">
                 {Object.entries(b.pericias ?? {}).sort((a, z) => z[1] - a[1]).map(([pid, t]) => (
                   <li key={pid}><span title={r?.pericias.find(p => p.id === pid)?.descricao}>{nomeDe(r?.pericias, pid)}</span>
-                    <span>{tiers[t - 1]?.nome ?? t}{r ? ` · ${custoPericia(r, pid, b.caminho, b.kit) * (tiers[t - 1]?.multiplicador ?? t)} pts` : ''}</span></li>
+                    <span>{tiers[t - 1]?.nome ?? t}{r ? ` · ${custoPericia(r, pid, b.caminho, vt.vocacao, vt.traco) * (tiers[t - 1]?.multiplicador ?? t)} pts` : ''}</span></li>
                 ))}
               </ul>
             </section>

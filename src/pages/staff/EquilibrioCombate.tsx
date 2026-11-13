@@ -24,7 +24,7 @@ function Tab({ titulo, linhas, cols, max = 30, nota }: { titulo: string; linhas:
 export default function EquilibrioCombate() {
   const d = dados as unknown as L
   const e = d.equilibrio as L, r = d.resumo as L, k = e.kpis as L
-  const [ficha, setFicha] = useState<'kit' | 'classe' | 'povo'>('kit')
+  const [ficha, setFicha] = useState<'kit' | 'vocacao' | 'traco' | 'linha' | 'classe' | 'povo'>('kit')
   const [medida, setMedida] = useState<'danoPorMana' | 'danoPorLance' | 'curaPorMana' | 'falha'>('danoPorMana')
   const magias = [...(e.magias as L[])].sort((a, b) => (b[medida] ?? -1) - (a[medida] ?? -1))
   const data = (s?: string) => (s ? new Date(s).toLocaleString('pt-BR') : '—')
@@ -58,9 +58,9 @@ export default function EquilibrioCombate() {
 
       <h3>Fichas</h3>
       <label>Agrupar por{' '}
-        <select value={ficha} onChange={ev => setFicha(ev.target.value as typeof ficha)}><option value="kit">Kit</option><option value="classe">Classe</option><option value="povo">Povo</option></select>
+        <select value={ficha} onChange={ev => setFicha(ev.target.value as typeof ficha)}><option value="kit">Kit</option><option value="vocacao">Vocação</option><option value="traco">Traço</option><option value="linha">Linha</option><option value="classe">Classe</option><option value="povo">Povo</option></select>
       </label>
-      <Tab titulo="" linhas={e.fichas[ficha]} cols={[['nome', 'Nome'], ['jogadores', 'Jogadores'], ['golpes', 'Golpes'], ['acerto', 'Acerto %'], ['esperado', 'Esperado/golpe'], ['recebido', 'Recebe/golpe'], ['abates', 'Abates'], ['mortes', 'Mortes'], ['ttk', 'Tempo p/ matar (s)']]} />
+      <Tab titulo="" linhas={e.fichas[ficha] ?? []} cols={[['nome', 'Nome'], ['jogadores', 'Jogadores'], ['golpes', 'Golpes'], ['acerto', 'Acerto %'], ['esperado', 'Esperado/golpe'], ['recebido', 'Recebe/golpe'], ['abates', 'Abates'], ['mortes', 'Mortes'], ['ttk', 'Tempo p/ matar (s)']]} />
 
       <Tab titulo="Monstros contra jogadores, por nível" linhas={e.monstros} max={60} cols={[['nome', 'Monstro'], ['nivel', 'Nível'], ['vida', 'Vida'], ['golpes', 'Golpes'], ['acerto', 'Acerto %'], ['dano', 'Dano/golpe'], ['abates', 'Mataram'], ['morreu', 'Morreram'], ['ttk', 'Tempo p/ morrer (s)']]}
         nota="Em vermelho: dano por golpe mais de 35% acima da mediana dos monstros do mesmo nível (30 golpes ou mais)." />

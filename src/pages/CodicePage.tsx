@@ -14,7 +14,7 @@ const textoPuro = (html: string) => {
   const d = document.createElement('div'); d.innerHTML = html; return d.textContent ?? ''
 }
 // Nome de seção a partir do id quando a API não manda "secao"
-const ROTULOS_SECAO: [number, string][] = [[0, 'O Mundo'], [20, 'Povos'], [29, 'Caminhos'], [40, 'Kits'], [49, 'Perícias'], [60, 'Magia']]
+const ROTULOS_SECAO: [number, string][] = [[0, 'O Mundo'], [20, 'Povos'], [29, 'Caminhos'], [40, 'Vocações e Traços'], [49, 'Perícias'], [60, 'Magia']]
 function secaoDe(c: CapituloResumo) {
   if (c.secao) return c.secao
   const n = parseInt(c.id, 10)
@@ -95,7 +95,7 @@ export default function CodicePage() {
   return (
     <div className="pagina pagina-larga" ref={topo}>
       <CabecalhoPagina sobre="O livro do mundo" titulo="Códice de Tybar">
-        Tudo o que o manual do jogo ensina, na íntegra: o mundo, os povos, os caminhos, os kits, as perícias e a magia.
+        Tudo o que o manual do jogo ensina, na íntegra: o mundo, os povos, os caminhos, as vocações e os traços, as perícias e a magia.
       </CabecalhoPagina>
       {indice.erro && <Erro erro={indice.erro} tentar={indice.carregar} />}
       {indice.carregando && <Carregando />}

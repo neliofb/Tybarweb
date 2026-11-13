@@ -29,6 +29,7 @@ export default function MinhasBuildsPage() {
       {msg && <div className={'aviso ' + (msg.ok ? 'aviso-ok' : 'aviso-erro')} role="status" style={{ marginBottom: 18 }}>{msg.t}</div>}
       {builds.carregando && <Carregando />}
       {builds.erro && <Erro erro={builds.erro} tentar={builds.carregar} />}
+      {builds.dados?.some(b => b.convertida || (!b.vocacao && !b.traco && b.kit)) && <div className="aviso aviso-info" style={{ marginBottom: 18 }}>Algumas builds foram feitas no sistema antigo de kits e aparecem convertidas para vocação e traço. Abra em <b>Editar</b>, confira e salve para gravar no formato novo.</div>}
       {builds.dados && (builds.dados.length ? (
         <div className="grade grade-3">
           {builds.dados.map(b => (

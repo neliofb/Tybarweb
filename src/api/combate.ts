@@ -2,7 +2,7 @@
 import { api } from './client'
 
 export interface LinhaCombate { chave: string; causado: number; nCausado: number; recebido: number; nRecebido: number; cura: number; nCura: number; golpes: number; acertos: number; criticos: number }
-export type DimCombate = 'classe' | 'estilo' | 'modelo' | 'matArma' | 'matArmadura' | 'faixa' | 'periciaTop' | 'magia' | 'escola' | 'jogador'
+export type DimCombate = 'classe' | 'estilo' | 'modelo' | 'matArma' | 'matArmadura' | 'faixa' | 'periciaTop' | 'magia' | 'escola' | 'jogador' | 'vocacao' | 'traco' | 'linha'
 export type StatsCombate = { calculando?: boolean; dias?: number; arquivos?: number; eventos?: number; geradoEm?: string } & Partial<Record<DimCombate, LinhaCombate[]>>
 
 export const getCombate = (dias: number) => api.get<StatsCombate>('/api/staff/combate', { params: { dias } })

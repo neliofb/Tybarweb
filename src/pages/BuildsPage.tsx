@@ -2,6 +2,8 @@ import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { getBuilds, getRegras } from '../api/site'
 import BuildCard from '../components/BuildCard'
+import { BUILDS_SUGERIDAS, sugeridaParaBuild } from '../data/buildsSugeridas'
+import { NOME_CAMINHO_VOC, nomeDe } from '../ficha'
 import { Busca, CabecalhoPagina, Carregando, Erro, useDados, useTitulo } from '../components/ui'
 
 export default function BuildsPage() {
@@ -20,6 +22,8 @@ export default function BuildsPage() {
   [builds.dados, caminho, texto])
   const padrao = filtradas.filter(b => b.tipo === 'oficial')
   const comunidade = filtradas.filter(b => b.tipo === 'comunidade')
+  const iniciais = BUILDS_SUGERIDAS.filter(s => (!caminho || s.caminho === caminho)
+    && (!texto || [s.nome, s.descricao, s.vocacao, s.linha].join(' ').toLowerCase().includes(texto.toLowerCase())))
 
   return (
     <div className="pagina pagina-larga">
@@ -42,6 +46,34 @@ export default function BuildsPage() {
           <button key={v} className="chip" aria-pressed={tipo === v} onClick={() => set('tipo', v)}>{n}</button>
         ))}
       </div>
+      {tipo !== 'comunidade' && (
+        <section aria-labelledby="iniciais-t" style={{ marginBottom: 40 }}>
+          <h2 id="iniciais-t" style={{ marginBottom: 6 }}>Builds iniciais</h2>
+          <p className="texto-2" style={{ marginBottom: 16 }}>Uma ficha básica por vocação (e por linha, quando a vocação tem linhas), já dentro das regras: povo sugerido, perícias, atributos, traço e os talentos-chave de cada nível.</p>
+          {iniciais.length ? <div className="grade grade-3">{iniciais.map(sg => {
+            const x = sugeridaParaBuild(sg)
+            return (
+              <BuildCard key={x.id} b={x} r={regras.dados} semLink extra={
+                <div className="pilha" style={{ width: '100%' }}>
+                  <details>
+                    <summary className="discreto" style={{ cursor: 'pointer' }}>Perícias e talentos-chave</summary>
+                    <p className="discreto" style={{ margin: '6px 0' }}>{NOME_CAMINHO_VOC[sg.caminho]} · For {sg.atributos.str} / Des {sg.atributos.dex} / Int {sg.atributos.int}</p>
+                    <ul className="resumo-lista">
+                      {Object.entries(sg.pericias).sort((a, z) => 'PST'.indexOf(a[1]) - 'PST'.indexOf(z[1])).map(([p, g]) => (
+                        <li key={p}><span>{nomeDe(regras.dados?.pericias, p)}</span><span>{{ P: 'Primária', S: 'Secundária', T: 'Terciária' }[g]}</span></li>
+                      ))}
+                    </ul>
+                    <ul className="resumo-lista" style={{ marginTop: 8 }}>
+                      {sg.talentos.map(t => <li key={t.nivel + t.nome}><span>Nível {t.nivel}</span><span>{t.nome}</span></li>)}
+                    </ul>
+                  </details>
+                  <Link className="btn btn-p" to={'/simulador?inicial=' + sg.id}>Começar a partir desta</Link>
+                </div>
+              } />
+            )
+          })}</div> : <div className="vazio">Nenhuma build inicial com esses filtros.</div>}
+        </section>
+      )}
       {builds.carregando && <Carregando />}
       {builds.erro && <Erro erro={builds.erro} tentar={builds.carregar} />}
       {builds.dados && tipo !== 'comunidade' && (

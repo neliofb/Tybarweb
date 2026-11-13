@@ -6,7 +6,8 @@
     "dev": "vite",
     "dev:mock": "vite --mode mock",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "conferir-builds": "esbuild scripts/conferir_builds.ts --bundle --platform=node --format=esm --external:axios \"--define:import.meta.env={}\" --outfile=node_modules/.cache/conferir_builds.mjs --log-level=error && node node_modules/.cache/conferir_builds.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",

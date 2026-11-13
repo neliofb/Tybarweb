@@ -64,6 +64,22 @@ function TopicoNavio() {
   )
 }
 
+function TopicoVocacoes() {
+  return (
+    <>
+      <p>O antigo <b>kit</b> misturava duas coisas: de onde você veio e o que você faz. Agora a criação tem duas escolhas obrigatórias, depois do povo e do caminho:</p>
+      <ul>
+        <li><b>Vocação</b> (uma): muda o custo de algumas perícias na criação, dá um benefício pequeno e define a <b>árvore de talentos</b> do nível 4 ao 20. São 21: <b>Armas</b> (Combatente, Arqueiro, Escudeiro, Médico de Combate, Berserker, Guerreiro Santo, Ranger, Cria da Fúria), <b>Subterfúgio</b> (Assassino, Duelista, Gatuno, Caçador de Tesouros, Batedor), <b>Sabedoria</b> (Acólito do Panteão, Mesumbeiro, Shimoriano, Totemista, Kitahne, Alquimista) e <b>Ofícios</b>, para qualquer caminho (Artífice, Coletor).</li>
+        <li><b>Linhas</b>: algumas vocações escolhem uma linha no nível 4. Kitahne: <b>Kitahne</b>, <b>Lâmina Arcana</b> ou <b>Égide</b>. Mesumbeiro e Shimoriano: <b>Necromante</b> e as linhas novas. Mesumbeiro é proibido; Shimoriano é autorizado pelo Círculo de Shimoria.</li>
+        <li><b>Traço</b> (um): corpo, mente ou origem, sem árvore. São 16: Ágil, Corpulento, Gênio, Velho, Duro de Matar, Fortitude do Urso, Reflexos de Pantera, Vontade da Águia, Sabe-tudo, Pacto de Mesum, Bandido, Ladino Treinado, Nômade do Deserto, Defensor do Reino, Membro da Nobreza e Marcado da Raiz.</li>
+      </ul>
+      <p>No nível 2 todos continuam com os <b>Comuns do caminho</b> e os <b>Talentos Gerais</b>. A loja da criação saiu: cada personagem recebe um <b>pacote inicial</b> conforme as perícias, a vocação e o traço.</p>
+      <p>Personagens antigos foram convertidos sem perder nada: o kit vira vocação ou traço, e onde há dúvida o jogo pede a escolha no primeiro login. Builds do site feitas com kit também são convertidas (com aviso).</p>
+      <p><Link to="/simulador">Monte a sua no simulador</Link>, veja as <Link to="/builds">builds iniciais</Link> ou <Link to="/talentos">todos os talentos por vocação</Link>.</p>
+    </>
+  )
+}
+
 function TopicoConstrucao() {
   return (
     <>
@@ -111,6 +127,7 @@ function TopicoMissoesWorkers() {
 
 /** Para adicionar um tópico novo: acrescente um item aqui. */
 const TOPICOS: { id: string; titulo: string; Corpo: () => JSX.Element }[] = [
+  { id: 'vocacoes', titulo: 'Vocações e Traços', Corpo: TopicoVocacoes },
   { id: 'navio', titulo: 'Navio', Corpo: TopicoNavio },
   { id: 'construcao', titulo: 'Construção (Mansory)', Corpo: TopicoConstrucao },
   { id: 'missoes', titulo: 'Missões para workers', Corpo: TopicoMissoesWorkers },

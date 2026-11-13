@@ -4,10 +4,12 @@ import { getRegras, getBuild, getBuilds, criarBuild, salvarBuild, msgErro, Regra
 import { useSessao } from '../auth'
 import BuildCard from '../components/BuildCard'
 import { CabecalhoPagina, Carregando, Erro, Midia, fontesPovo, fontesDe, videoPovo, useDados, useTitulo } from '../components/ui'
-import { custoPericia, pontosGastos, pontosTotais, tiersDe, kitPermitido, nomeDe, problemas, maxPrimarias, contaPrimarias } from '../ficha'
+import { custoPericia, pontosGastos, pontosTotais, tiersDe, nomeDe, problemas, maxPrimarias, contaPrimarias, vocacaoPermitida, motivoVocacao, tracoPermitido, vocacaoTracoDe, NOME_CAMINHO_VOC } from '../ficha'
+import { BUILDS_SUGERIDAS, sugeridaParaBuild } from '../data/buildsSugeridas'
 
 type Rascunho = Partial<BuildEntrada> & { pericias: Record<string, number>; atributos: { str: number; dex: number; int: number } }
-const ETAPAS = ['Ponto de partida', 'Povo', 'Caminho', 'Kit', 'Atributos', 'Perícias', 'Resumo'] as const
+const ETAPAS = ['Ponto de partida', 'Povo', 'Caminho', 'Vocação', 'Traço', 'Atributos', 'Perícias', 'Resumo'] as const
+const RESUMO = ETAPAS.length - 1
 const CHAVE = 'tybar-rascunho-build'
 
 function novo(r?: Regras): Rascunho {
@@ -47,13 +49,18 @@ export default function SimuladorPage() {
   const { buildId } = useParams()
   const [q] = useSearchParams()
   const de = q.get('de')
+  const inicial = BUILDS_SUGERIDAS.find(x => x.id === q.get('inicial'))
   const s = useSessao()
   const navigate = useNavigate()
   const regras = useDados(getRegras)
   const padrao = useDados(() => getBuilds('oficial'))
   const r = regras.dados
-  const [etapa, setEtapa] = useState(0)
+  const [etapa, setEtapa] = useState(() => (q.get('inicial') ? ETAPAS.length - 1 : 0))
   const [b, setB] = useState<Rascunho>(() => {
+    if (inicial) {
+      const x = sugeridaParaBuild(inicial)
+      return { nome: '', descricao: inicial.descricao, estilo: inicial.nome, povo: x.povo, vantagem: x.vantagem, caminho: x.caminho, vocacao: x.vocacao, traco: x.traco, linha: x.linha, pericias: { ...(x.pericias ?? {}) }, atributos: x.atributos! }
+    }
     if (buildId || de) return novo()
     try { const x = JSON.parse(localStorage.getItem(CHAVE) ?? ''); if (x?.pericias) return x } catch { /* sem rascunho */ }
     return novo()
@@ -72,20 +79,21 @@ export default function SimuladorPage() {
     getBuild(id).then(res => {
       const x = res.data
       if (buildId) { setOriginal(x); setOficial(x.tipo === 'oficial') }
+      const vt = vocacaoTracoDe(r, x)
       setB({
         nome: buildId ? x.nome : x.nome + ' (cópia)', descricao: x.descricao ?? '', povo: x.povo, vantagem: x.vantagem, caminho: x.caminho,
-        kit: x.kit, estilo: x.estilo, imagem: buildId ? x.imagem : undefined, comoJoga: buildId ? x.comoJoga : undefined, porque: buildId ? x.porque : undefined, pericias: { ...(x.pericias ?? {}) }, atributos: x.atributos ?? novo(r ?? undefined).atributos,
+        vocacao: vt.vocacao, traco: vt.traco, linha: x.linha, kit: vt.convertida ? x.kit : undefined, estilo: x.estilo, imagem: buildId ? x.imagem : undefined, comoJoga: buildId ? x.comoJoga : undefined, porque: buildId ? x.porque : undefined, pericias: { ...(x.pericias ?? {}) }, atributos: x.atributos ?? novo(r ?? undefined).atributos,
       })
-      setEtapa(6)
+      setEtapa(RESUMO)
     }).catch(e => setMsg({ ok: false, t: msgErro(e) }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buildId, de])
+  }, [buildId, de, !!r])
 
   useEffect(() => { if (!buildId) try { localStorage.setItem(CHAVE, JSON.stringify(b)) } catch { /* cheio */ } }, [b, buildId])
 
   const tiers = r ? tiersDe(r) : []
-  const total = r ? pontosTotais(r, b.kit, b.vantagem) : 0
-  const gastos = r ? pontosGastos(r, b.pericias, b.caminho, b.kit) : 0
+  const total = r ? pontosTotais(r, b.vocacao, b.traco, b.vantagem) : 0
+  const gastos = r ? pontosGastos(r, b.pericias, b.caminho, b.vocacao, b.traco) : 0
   const resta = total - gastos
   const probs = r ? problemas(r, b) : []
 
@@ -103,8 +111,11 @@ export default function SimuladorPage() {
   const atrMin = r.pontos.atributoMin ?? 30, atrMax = r.pontos.atributoMax ?? 90, atrBase = r.pontos.atributoBase ?? 30
   const atrGastos = b.atributos.str + b.atributos.dex + b.atributos.int - 3 * atrBase
   const vantagens = (r.vantagens ?? []).filter(v => !v.povos?.length || !b.povo || v.povos.includes(b.povo))
-  const kits = r.kits.filter(k => kitPermitido(k, b.povo, b.caminho))
-  const maxP = maxPrimarias(r, b.kit)
+  const vocsDoCaminho = r.vocacoes.filter(v => !b.caminho || v.caminho === b.caminho || v.caminho === 'Oficios')
+  const vocSel = r.vocacoes.find(v => v.id === b.vocacao)
+  const tracos = r.tracos
+  const maxP = maxPrimarias(r, b.traco)
+  const custo = (id: string, cam = b.caminho) => custoPericia(r, id, cam, b.vocacao, b.traco)
   const nPrim = contaPrimarias(r, b.pericias)
 
   const muda = (x: Partial<Rascunho>) => { setB(v => ({ ...v, ...x })); setMsg(null) }
@@ -120,9 +131,9 @@ export default function SimuladorPage() {
   }
 
   async function salvar() {
-    if (!b.nome?.trim()) { setMsg({ ok: false, t: 'Dê um nome para a build.' }); setEtapa(6); return }
+    if (!b.nome?.trim()) { setMsg({ ok: false, t: 'Dê um nome para a build.' }); setEtapa(RESUMO); return }
     setSalvando(true); setMsg(null)
-    const corpo: BuildEntrada = { ...b, nome: b.nome.trim(), ...(s.staff ? { tipo: oficial ? 'oficial' : 'comunidade' } : {}) }
+    const corpo: BuildEntrada = { ...b, kit: undefined, nome: b.nome.trim(), ...(s.staff ? { tipo: oficial ? 'oficial' : 'comunidade' } : {}) }
     try {
       const res = original?.minha || (original && s.staff) ? await salvarBuild(original.id, corpo) : await criarBuild(corpo)
       if (!buildId) localStorage.removeItem(CHAVE)
@@ -133,7 +144,7 @@ export default function SimuladorPage() {
   return (
     <div className="pagina pagina-larga">
       <CabecalhoPagina sobre="Antes de nascer em Tybar" titulo={buildId ? 'Editar build' : 'Simulador de personagem'}>
-        Monte o personagem com as mesmas regras da criação do jogo: povo, caminho, kit, atributos e perícias. Comece do zero ou a partir de uma build padrão. {s.logado ? 'Salve como build e marque-a para usar no próximo personagem.' : 'Entre na conta para salvar como build.'}
+        Monte o personagem com as mesmas regras da criação do jogo: povo, caminho, vocação, traço, atributos e perícias. Comece do zero ou a partir de uma build padrão. {s.logado ? 'Salve como build e marque-a para usar no próximo personagem.' : 'Entre na conta para salvar como build.'}
       </CabecalhoPagina>
 
       <nav className="etapas" aria-label="Etapas do simulador">
@@ -153,7 +164,7 @@ export default function SimuladorPage() {
                 <p className="texto-2">As builds padrão foram montadas pela staff para ajudar na criação: escolha uma e ajuste o que quiser, ou comece do zero.</p>
                 <div className="linha" style={{ marginTop: 12 }}>
                   <button className="btn btn-2" onClick={() => { setB(novo(r)); setEtapa(1) }}>Começar do zero</button>
-                  {Object.keys(b.pericias).length > 0 && <button className="btn btn-2" onClick={() => setEtapa(6)}>Continuar o rascunho</button>}
+                  {Object.keys(b.pericias).length > 0 && <button className="btn btn-2" onClick={() => setEtapa(RESUMO)}>Continuar o rascunho</button>}
                 </div>
               </div>
               {padrao.carregando && <Carregando />}
@@ -162,12 +173,31 @@ export default function SimuladorPage() {
                 {padrao.dados?.map(x => (
                   <BuildCard key={x.id} b={x} r={r} extra={
                     <button className="btn btn-p" onClick={() => {
-                      setB({ nome: '', descricao: '', estilo: x.estilo ?? x.nome, povo: x.povo, vantagem: x.vantagem, caminho: x.caminho, kit: x.kit,
+                      const vt = vocacaoTracoDe(r, x)
+                      setB({ nome: '', descricao: '', estilo: x.estilo ?? x.nome, povo: x.povo, vantagem: x.vantagem, caminho: x.caminho, vocacao: vt.vocacao, traco: vt.traco, linha: x.linha,
                         pericias: { ...(x.pericias ?? {}) }, atributos: x.atributos ?? novo(r).atributos })
-                      setEtapa(x.povo ? 6 : 1)
+                      setEtapa(x.povo ? RESUMO : 1)
                     }}>Começar a partir desta</button>
                   } />
                 ))}
+              </div>
+              <div className="painel">
+                <h3>Builds iniciais (uma por vocação)</h3>
+                <p className="texto-2">Fichas básicas que já fecham com as regras: povo, perícias, atributos, traço sugerido e talentos-chave. Escolha a da sua vocação e ajuste.</p>
+              </div>
+              <div className="grade grade-3">
+                {BUILDS_SUGERIDAS.map(sg => {
+                  const x = sugeridaParaBuild(sg)
+                  return (
+                    <BuildCard key={x.id} b={x} r={r} semLink extra={
+                      <button className="btn btn-p" onClick={() => {
+                        setB({ nome: '', descricao: sg.descricao, estilo: sg.nome, povo: x.povo, vantagem: x.vantagem, caminho: x.caminho, vocacao: x.vocacao, traco: x.traco, linha: x.linha,
+                          pericias: { ...(x.pericias ?? {}) }, atributos: x.atributos ?? novo(r).atributos })
+                        setEtapa(RESUMO)
+                      }}>Começar a partir desta</button>
+                    } />
+                  )
+                })}
               </div>
             </section>
           )}
@@ -216,19 +246,57 @@ export default function SimuladorPage() {
           )}
 
           {etapa === 3 && (
-            <section aria-label="Kit" className="pilha">
-              {!b.caminho && <div className="aviso aviso-info">Escolha o caminho antes: alguns kits só existem para um caminho ou povo.</div>}
-              <div className="escolha">
-                {kits.map(k => (
-                  <Opcao key={k.id} ativo={b.kit === k.id} onClick={() => muda({ kit: k.id })} titulo={k.nome}
-                    texto={k.descricao.replace(/<[^>]+>/g, ' ') + (k.pontosExtras ? ` (+${k.pontosExtras} pontos de perícia)` : '')} />
-                ))}
-              </div>
-              {r.kits.length > kits.length && <p className="discreto">{r.kits.length - kits.length} kit(s) escondido(s) por não servirem ao seu povo ou caminho.</p>}
+            <section aria-label="Vocação" className="pilha">
+              {!b.caminho && <div className="aviso aviso-info">Escolha o caminho antes: cada vocação é de um caminho (Artífice e Coletor servem a todos).</div>}
+              {!b.povo && <div className="aviso aviso-info">Escolha o povo antes: algumas vocações exigem um povo.</div>}
+              {Array.from(new Set(vocsDoCaminho.map(v => v.caminho))).map(cam => (
+                <div key={cam}>
+                  <h3 style={{ marginBottom: 10 }}>{NOME_CAMINHO_VOC[cam] ?? cam}</h3>
+                  <div className="escolha">
+                    {vocsDoCaminho.filter(v => v.caminho === cam).map(v => {
+                      const motivo = motivoVocacao(r, v, b.povo, b.caminho, b.vantagem)
+                      return (
+                        <div key={v.id} style={motivo ? { opacity: 0.5 } : undefined} title={motivo ?? undefined}>
+                          <Opcao ativo={b.vocacao === v.id} desab={!!motivo && b.vocacao !== v.id} onClick={() => muda({ vocacao: v.id, linha: v.id === b.vocacao ? b.linha : undefined })} titulo={v.nome}
+                            texto={(motivo ? '⚠ ' + motivo + ' ' : '') + v.descricao.replace(/<[^>]+>/g, ' ') + (v.pontosExtra ? ` (+${v.pontosExtra} pontos de perícia)` : '')} />
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+              {vocSel && vocSel.linhas.length > 0 && (
+                <div className="painel">
+                  <h3>Linha (escolhida no nível 4)</h3>
+                  <p className="texto-2">A vocação {vocSel.nome} tem linhas: a escolha é feita no jogo, no nível 4. Marque a que a build pretende seguir (opcional).</p>
+                  <div className="chips" role="group" aria-label="Linha" style={{ marginTop: 10 }}>
+                    <button className="chip" aria-pressed={!b.linha} onClick={() => muda({ linha: undefined })}>Ainda não sei</button>
+                    {vocSel.linhas.map(l => <button key={l.id} className="chip" aria-pressed={b.linha === l.id} onClick={() => muda({ linha: l.id })}>{l.nome}</button>)}
+                  </div>
+                </div>
+              )}
+              <p className="discreto">Veja a árvore de cada vocação em <Link to="/talentos">Talentos</Link>.</p>
             </section>
           )}
 
           {etapa === 4 && (
+            <section aria-label="Traço" className="pilha">
+              <p className="texto-2">O traço é o corpo, a mente ou a origem do personagem. Um só, sem árvore de talentos.</p>
+              <div className="escolha">
+                {tracos.map(t => {
+                  const ok = tracoPermitido(t, b.povo, b.caminho, b.vocacao, b.vantagem)
+                  return (
+                    <div key={t.id} style={ok ? undefined : { opacity: 0.5 }}>
+                      <Opcao ativo={b.traco === t.id} desab={!ok && b.traco !== t.id} onClick={() => muda({ traco: t.id })} titulo={t.nome}
+                        texto={(ok ? '' : '⚠ Não serve para o seu povo, vocação ou vantagem. ') + t.descricao.replace(/<[^>]+>/g, ' ') + (t.pontosExtra ? ` (+${t.pontosExtra} pontos de perícia)` : '')} />
+                    </div>
+                  )
+                })}
+              </div>
+            </section>
+          )}
+
+          {etapa === 5 && (
             <section className="painel" aria-label="Atributos">
               <h3>Atributos</h3>
               <p className="texto-2" style={{ marginBottom: 16 }}>Distribua {atrPontos} pontos. Cada atributo vai de {atrMin} a {atrMax}.</p>
@@ -244,16 +312,17 @@ export default function SimuladorPage() {
             </section>
           )}
 
-          {etapa === 5 && (
+          {etapa === 6 && (
             <section aria-label="Perícias" className="pilha">
               {!b.caminho && <div className="aviso aviso-info">Sem caminho, os custos mostrados são os mais altos. <button className="btn-link" onClick={() => setEtapa(2)}>Escolher caminho</button></div>}
+              {b.caminho && !b.vocacao && <div className="aviso aviso-info">A vocação muda os custos. <button className="btn-link" onClick={() => setEtapa(3)}>Escolher vocação</button></div>}
               <p className="texto-2">Cada nível custa o valor indicado (Terciária ×1, Secundária ×2, Primária ×3). Quanto menor o custo, mais natural a perícia é para o seu personagem. Clique no nome para ver o que ela faz e a fórmula.{maxP != null && <> No máximo <b>{maxP}</b> Primária(s) ({nPrim} usada(s)).</>}</p>
               {grupos.map(([g, ps]) => (
                 <div key={g}>
                   <h3 style={{ margin: '10px 0' }}>{g}</h3>
                   <div className="pericias">
-                    {[...ps].sort((a, z) => custoPericia(r, a.id, b.caminho, b.kit) - custoPericia(r, z.id, b.caminho, b.kit)).map(p => {
-                      const c = custoPericia(r, p.id, b.caminho, b.kit)
+                    {[...ps].sort((a, z) => custo(a.id) - custo(z.id)).map(p => {
+                      const c = custo(p.id)
                       const t = b.pericias[p.id] ?? 0
                       const aberto = aberta === p.id
                       return (
@@ -281,7 +350,7 @@ export default function SimuladorPage() {
                               <p>{p.descricao}</p>
                               {p.formula && <div className="formula" aria-label="Fórmula">{p.formula}</div>}
                               <p className="discreto" style={{ marginTop: 8 }}>
-                                Custo por caminho: {r.caminhos.map(cm => `${cm.nome} ${custoPericia(r, p.id, cm.id, b.kit)}`).join(' · ')}
+                                {b.vocacao ? <>Custo por caminho com {nomeDe(r.vocacoes, b.vocacao)}: {r.caminhos.map(cm => `${cm.nome} ${custo(p.id, cm.id)}`).join(' · ')}</> : 'Escolha a vocação para ver o custo final.'}
                               </p>
                             </div>
                           )}
@@ -294,7 +363,7 @@ export default function SimuladorPage() {
             </section>
           )}
 
-          {etapa === 6 && (
+          {etapa === 7 && (
             <section className="painel pilha" aria-label="Resumo e salvar">
               <h3>Resumo da build</h3>
               <label className="campo"><span>Nome da build</span>
@@ -307,6 +376,7 @@ export default function SimuladorPage() {
               <label className="campo"><span>Descrição</span>
                 <textarea className="entrada" value={b.descricao ?? ''} onChange={e => muda({ descricao: e.target.value })} maxLength={1500} placeholder="Como jogar, por que essas escolhas, para que grupo serve…" />
               </label>
+              {b.kit && <div className="aviso aviso-info">Esta build veio do sistema antigo de kits ({nomeDe(r.kits, b.kit)}) e foi convertida para vocação e traço. Confira e salve para gravar no formato novo.</div>}
               {probs.length > 0 && <div className="aviso aviso-erro"><b>Ainda não fecha:</b><ul style={{ marginLeft: 18 }}>{probs.map(x => <li key={x}>{x}</li>)}</ul></div>}
               {s.staff && (
                 <label className="linha" style={{ cursor: 'pointer' }}>
@@ -335,7 +405,9 @@ export default function SimuladorPage() {
             <li><span>Povo</span><span>{nomeDe(r.povos, b.povo)}</span></li>
             {b.vantagem && <li><span>Vantagem</span><span>{nomeDe(r.vantagens, b.vantagem)}</span></li>}
             <li><span>Caminho</span><span>{nomeDe(r.caminhos, b.caminho)}</span></li>
-            <li><span>Kit</span><span>{nomeDe(r.kits, b.kit)}</span></li>
+            <li><span>Vocação</span><span>{nomeDe(r.vocacoes, b.vocacao)}</span></li>
+            {b.linha && <li><span>Linha</span><span>{nomeDe(vocSel?.linhas, b.linha)}</span></li>}
+            <li><span>Traço</span><span>{nomeDe(r.tracos, b.traco)}</span></li>
             <li><span>Estilo</span><span>{b.estilo || '—'}</span></li>
             <li><span>For / Des / Int</span><span>{b.atributos.str} / {b.atributos.dex} / {b.atributos.int}</span></li>
           </ul>
@@ -347,7 +419,7 @@ export default function SimuladorPage() {
           </div>
           <ul className="resumo-lista" style={{ marginTop: 12 }}>
             {Object.entries(b.pericias).sort((a, z) => z[1] - a[1]).map(([id, t]) => (
-              <li key={id}><span>{nomeDe(r.pericias, id)}</span><span>{tiers[t - 1]?.nome ?? t} · {custoPericia(r, id, b.caminho, b.kit) * (tiers[t - 1]?.multiplicador ?? t)}</span></li>
+              <li key={id}><span>{nomeDe(r.pericias, id)}</span><span>{tiers[t - 1]?.nome ?? t} · {custo(id) * (tiers[t - 1]?.multiplicador ?? t)}</span></li>
             ))}
             {!Object.keys(b.pericias).length && <li><span>Nenhuma perícia ainda</span><span /></li>}
           </ul>

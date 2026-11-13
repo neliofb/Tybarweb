@@ -25,6 +25,35 @@ export interface Kit {
   pontosExtras?: number
 }
 export interface Classe { id: string; nome: string; descricao: string; caminho?: string; nivel?: number }
+/** Linha da vocação (escolhida no N4): Kitahne → Kitahne / Lâmina Arcana / Égide; Mesumbeiro/Shimoriano → Necromante… */
+export interface LinhaVoc { id: string; nome: string; arvore?: string[] }
+export interface Vocacao {
+  id: string; nome: string
+  /** Armas | Subterfugio | Sabedoria | Oficios (Ofícios: qualquer caminho) */
+  caminho: string
+  descricao: string
+  /** pontos de perícia a mais (Combatente/Berserker/Gatuno +2, Escudeiro +1) */
+  pontosExtra: number
+  /** caminho → povo → vantagens com que a vocação vale (povo ausente = não pode) */
+  permitido: Record<string, Record<string, string[]>>
+  linhas: LinhaVoc[]
+  /** IDs dos talentos da árvore (N4..N20), sem as linhas */
+  arvore?: string[]
+  /** kits antigos que viram esta vocação (tabela (a)) */
+  kitsAntigos?: string[]
+}
+export interface Traco {
+  id: string; nome: string; descricao: string
+  pontosExtra: number
+  primariasMax: number
+  /** caminho → povos permitidos */
+  permitido: Record<string, string[]>
+  /** vocações/vantagens que proíbem o traço (Pacto de Mesum: magia divina, totem, Kitah) */
+  proibidoComVocacoes?: string[]
+  proibidoComVantagens?: string[]
+  /** kit antigo com o mesmo efeito (tabela (a)) */
+  kitAntigo?: string
+}
 export interface Pericia {
   id: string; nome: string; grupo: string; descricao: string; formula?: string
   /** Custo por nível sem kit: número fixo ou por caminho ({Armas:1, Subterfugio:2, ...}) */
@@ -39,8 +68,17 @@ export interface Regras {
   classes: Classe[]
   pericias: Pericia[]
   tiers?: Tier[]
-  /** Custos finais calculados pelo jogo: custos[caminho][kit ou "_"][pericia] */
+  /** Custos do sistema ANTIGO de kits: custos[caminho][kit ou "_"][pericia] (só para conversão/histórico) */
   custos?: Record<string, Record<string, Record<string, number>>>
+  /** Vocações e Traços (13/11/2026) */
+  vocacoes: Vocacao[]
+  tracos: Traco[]
+  /** custosVocacao[caminho][vocacao][pericia] com traço nenhum (RegrasDaVocacao.Custo) */
+  custosVocacao?: Record<string, Record<string, Record<string, number>>>
+  /** só as diferenças por traço: custosTraco[caminho][vocacao][traco][pericia] */
+  custosTraco?: Record<string, Record<string, Record<string, Record<string, number>>>>
+  /** pontos de perícia do sistema novo (base 22, Versatilidade +2) */
+  pontosVocacao?: { base: number; versatilidade?: number; primariasMax?: number }
   pontos: {
     pericias: number; atributos?: number; atributoMin?: number; atributoMax?: number; atributoBase?: number
     /** Limite de perícias Primárias (e o limite com o kit Sabe-Tudo) */
@@ -61,9 +99,14 @@ interface RegrasApi {
   pericias: Pericia[]
   custos?: Regras['custos']
   pontos?: Regras['pontos']
+  vocacoes?: Vocacao[]
+  tracos?: Traco[]
+  custosVocacao?: Regras['custosVocacao']
+  custosTraco?: Regras['custosTraco']
+  pericias_pontos_vocacao?: Regras['pontosVocacao']
 }
 export function normalizarRegras(a: RegrasApi): Regras {
-  if (a.pontos) return a as unknown as Regras // já no formato das telas (mock antigo)
+  if (a.pontos) return { ...(a as unknown as Regras), vocacoes: a.vocacoes ?? [], tracos: a.tracos ?? [] } // já no formato das telas (mock)
   const pp = a.pericias_pontos ?? { base: 22 }
   const raca = (id: string) => a.povos.find(p => p.id === id)?.raca
   return {
@@ -79,6 +122,11 @@ export function normalizarRegras(a: RegrasApi): Regras {
     pericias: a.pericias,
     tiers: a.tiers?.map(t => ({ id: t.id, nome: t.nome, multiplicador: t.multiplicador, valor: t.inicio, teto: t.teto })),
     custos: a.custos,
+    vocacoes: a.vocacoes ?? [],
+    tracos: a.tracos ?? [],
+    custosVocacao: a.custosVocacao,
+    custosTraco: a.custosTraco,
+    pontosVocacao: a.pericias_pontos_vocacao,
     pontos: {
       pericias: pp.base,
       atributos: a.atributos?.pontos, atributoMin: a.atributos?.min, atributoMax: a.atributos?.max, atributoBase: a.atributos?.base,
@@ -111,7 +159,14 @@ export interface Build {
   povo?: string
   vantagem?: string
   caminho?: string
+  /** Kit do sistema antigo (só leitura): build sem vocação é convertida pela tabela (a) e mostra aviso */
   kit?: string
+  vocacao?: string
+  traco?: string
+  /** linha sugerida da vocação (N4), quando a vocação tem linhas */
+  linha?: string
+  /** true = vocação/traço deduzidos do kit antigo (o dono ainda não confirmou) */
+  convertida?: boolean
   atributos?: { str: number; dex: number; int: number }
   /** perícia → índice do tier (1 = Terciária, 2 = Secundária, 3 = Primária) */
   pericias?: Record<string, number>
@@ -121,7 +176,7 @@ export interface Build {
   minha?: boolean
   emUso?: boolean
 }
-export type BuildEntrada = Omit<Build, 'id' | 'tipo' | 'autor' | 'criadaEm' | 'atualizadaEm' | 'minha' | 'emUso' | 'pontos'> & { tipo?: TipoBuild }
+export type BuildEntrada = Omit<Build, 'id' | 'tipo' | 'autor' | 'criadaEm' | 'atualizadaEm' | 'minha' | 'emUso' | 'pontos' | 'convertida'> & { tipo?: TipoBuild }
 
 const TIER_IDS = ['', 'Terciaria', 'Secundaria', 'Primaria']
 function normalizarBuild(x: any): Build {
@@ -143,9 +198,11 @@ function normalizarBuild(x: any): Build {
   }
 }
 function paraApi(b: BuildEntrada) {
-  const { atributos, pericias, ...resto } = b
+  const { atributos, pericias, kit, ...resto } = b
   return {
     ...resto,
+    // build salva no formato novo: sem vocação/traço manda o kit antigo (o servidor converte)
+    kit: resto.vocacao || resto.traco ? undefined : kit,
     atributos: atributos ? { forca: atributos.str, destreza: atributos.dex, inteligencia: atributos.int } : undefined,
     pericias: Object.fromEntries(Object.entries(pericias ?? {}).filter(([, t]) => t > 0).map(([k, t]) => [k, TIER_IDS[t]])),
   }

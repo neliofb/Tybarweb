@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import analise from '../../data/analiseCombate.json'
 import { RECOMENDACOES } from '../../data/recomendacoesCombate'
 
@@ -22,6 +23,7 @@ const GOLPE: [string, string][] = [['golpes', 'Golpes'], ['acerto', 'Acerto %'],
 export default function AnaliseBalanceamento() {
   const a = analise as unknown as Record<string, any>
   const c = a.maiorCritico
+  const [dim, setDim] = useState<'kit' | 'vocacao' | 'traco' | 'linha'>('kit')
   return (
     <div className="painel">
       <h2 style={{ marginTop: 0 }}>Análise de balanceamento — {a.geradoEm}</h2>
@@ -31,7 +33,10 @@ export default function AnaliseBalanceamento() {
       <h3>Recomendações</h3>
       <ol>{RECOMENDACOES.map(r => <li key={r.titulo}><b>{r.titulo}</b> — {r.texto} <span className="discreto">({r.onde})</span></li>)}</ol>
 
-      <Tabela titulo="Por kit" linhas={a.kit} cols={GOLPE} />
+      <label>Agrupar por{' '}
+        <select value={dim} onChange={ev => setDim(ev.target.value as typeof dim)}><option value="kit">Kit</option><option value="vocacao">Vocação</option><option value="traco">Traço</option><option value="linha">Linha</option></select>
+      </label>
+      <Tabela titulo={dim === 'kit' ? 'Por kit' : dim === 'vocacao' ? 'Por vocação' : dim === 'traco' ? 'Por traço' : 'Por linha'} linhas={a[dim] ?? []} cols={GOLPE} />
       <Tabela titulo="Por arma" linhas={a.arma} cols={GOLPE} max={25} />
       <Tabela titulo="Por estilo" linhas={a.estilo} cols={GOLPE} />
       <Tabela titulo="Por perícia de ataque" linhas={a.pericia} cols={[['golpes', 'Golpes'], ['acerto', 'Acerto %']]} />
