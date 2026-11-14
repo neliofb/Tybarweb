@@ -40,7 +40,9 @@ export default function TalentosPage({ staff = false }: { staff?: boolean }) {
       (!tipo || (tipo === 'ativo' ? t.ativo : !t.ativo)) &&
       (!b || (t.nome + ' ' + t.descricao + ' ' + t.comandos.join(' ')).toLowerCase().includes(b)))
   }, [todos, busca, caminho, vocacao, linha, status, tipo])
-  const grupos = Array.from(new Set(lista.map(t => t.caminho)))
+  // Nível 2 de todos primeiro: Talentos Gerais, depois os Comuns de cada caminho; "Fora das árvores" por último
+  const peso = (c: string) => c === 'Talentos Gerais' ? 0 : c.startsWith('Comuns') ? 1 : c.startsWith('Fora') ? 3 : 2
+  const grupos = Array.from(new Set(lista.map(t => t.caminho))).sort((a, b) => peso(a) - peso(b) || a.localeCompare(b, 'pt-BR'))
 
   return (
     <div className="pagina pagina-larga">
