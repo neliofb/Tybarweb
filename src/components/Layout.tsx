@@ -56,6 +56,7 @@ export default function Layout() {
           {s.staff && (
             <div className="nav-grupo" aria-label="Área da staff">
               <NavLink to="/staff" className={cls}>Staff</NavLink>
+              <NavLink to="/staff/catalogo-custom" className={cls}>Itens e animações</NavLink>
             </div>
           )}
           <div className="cab-conta">

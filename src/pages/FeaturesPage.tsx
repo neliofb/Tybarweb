@@ -125,12 +125,35 @@ function TopicoMissoesWorkers() {
   )
 }
 
+function TopicoCarrocaCharrete() {
+  return (
+    <>
+      <h3>Carrinho de mão</h3>
+      <video controls preload="metadata" poster="/videos/carrinho.jpg" style={{ width: '100%', maxWidth: 1000, display: 'block', borderRadius: 6, background: '#000', aspectRatio: '1280/666' }}>
+        <source src="/videos/carrinho.mp4" type="video/mp4" />
+      </video>
+      <p>O carrinho segue você <b>passo a passo, sem tranco</b>, e a roda gira enquanto anda. Vazio ele fica aberto; com carga, aparece coberto com a lona. Aguenta <b>5.000 de peso</b>. Com o carrinho você anda mais devagar, e ele é solto se você montar, se afastar ou morrer. Pelo menu dá para abrir a carga, soltar o carrinho ou recolhê-lo para a mochila.</p>
+      <h3>Charrete</h3>
+      <video controls preload="metadata" poster="/videos/charrete.jpg" style={{ width: '100%', maxWidth: 1000, display: 'block', borderRadius: 6, background: '#000', aspectRatio: '1280/666' }}>
+        <source src="/videos/charrete.mp4" type="video/mp4" />
+      </video>
+      <p>Para grandes cargas: uma carroça puxada por <b>dois cavalos</b>, com você sentado no banco, de roupa e tudo. Nas curvas, os <b>cavalos viram primeiro</b> e a carroça acompanha. Vazia ela anda aberta; com carga, fecha com a lona. Aguenta <b>30.000 de peso</b> (seis carrinhos) e até 750 itens.</p>
+      <ul>
+        <li>Dois cliques abrem o menu: <b>Subir e puxar</b> ou <b>Abrir a carga</b>.</li>
+        <li>Só o dono sobe na charrete; a carga abre com ela parada e o dono ao lado.</li>
+        <li>Não é animal: não obedece comandos, não conta como seguidor e não vai para o estábulo.</li>
+      </ul>
+    </>
+  )
+}
+
 /** Para adicionar um tópico novo: acrescente um item aqui. */
 const TOPICOS: { id: string; titulo: string; Corpo: () => JSX.Element }[] = [
   { id: 'vocacoes', titulo: 'Vocações e Traços', Corpo: TopicoVocacoes },
   { id: 'navio', titulo: 'Navio', Corpo: TopicoNavio },
   { id: 'construcao', titulo: 'Construção (Mansory)', Corpo: TopicoConstrucao },
   { id: 'missoes', titulo: 'Missões para workers', Corpo: TopicoMissoesWorkers },
+  { id: 'carroca', titulo: 'Carroça e charrete', Corpo: TopicoCarrocaCharrete },
 ]
 
 export default function FeaturesPage() {
