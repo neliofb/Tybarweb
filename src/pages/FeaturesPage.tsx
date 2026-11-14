@@ -139,10 +139,26 @@ function TopicoCarrocaCharrete() {
       </video>
       <p>Para grandes cargas: uma carroça puxada por <b>dois cavalos</b>, com você sentado no banco, de roupa e tudo. Nas curvas, os <b>cavalos viram primeiro</b> e a carroça acompanha. Vazia ela anda aberta; com carga, fecha com a lona. Aguenta <b>30.000 de peso</b> (seis carrinhos) e até 750 itens.</p>
       <ul>
-        <li>Dois cliques abrem o menu: <b>Subir e puxar</b> ou <b>Abrir a carga</b>.</li>
+        <li><b>Como fazer:</b> na <b>Marcenaria</b> (Woodworking 60, 300 tábuas, na bancada) sai a <b>Escritura da Charrete</b>. Dois cliques na escritura põem a charrete no chão, ainda <b>sem cavalos</b>. A escritura é só de ida: a charrete não volta a ser escritura.</li>
+        <li><b>Prender cavalo:</b> no menu da charrete, escolha <b>Prender cavalo</b> e aponte um cavalo <b>domado por você</b> (cavalo comum ou de tração), perto dela. Ele fica guardado na charrete e <b>deixa de contar como seguidor</b>; dá para prender um, domar outro e prender o segundo. Com <b>dois cavalos</b> presos, a charrete pode ser puxada.</li>
+        <li><b>Soltar cavalos:</b> pelo menu os cavalos voltam ao seu lado, como seus, se você tiver espaço de seguidor; a charrete fica parada até você prender de novo.</li>
+        <li>Dois cliques abrem o menu: <b>Subir e puxar</b>, <b>Abrir a carga</b>, <b>Prender cavalo</b> e <b>Soltar cavalos</b>.</li>
         <li>Só o dono sobe na charrete; a carga abre com ela parada e o dono ao lado.</li>
-        <li>Não é animal: não obedece comandos, não conta como seguidor e não vai para o estábulo.</li>
+        <li>A charrete não é animal: não obedece comandos, não conta como seguidor e não vai para o estábulo.</li>
       </ul>
+    </>
+  )
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TopicoDragaoVoador() {
+  return (
+    <>
+      <video controls preload="metadata" poster="/videos/dragao_voador.jpg" style={{ width: '100%', maxWidth: 1000, display: 'block', borderRadius: 6, background: '#000', aspectRatio: '1280/666' }}>
+        <source src="/videos/dragao_voador.mp4" type="video/mp4" />
+      </video>
+      <p><b>Prévia em desenvolvimento.</b> Montado no seu dragão, use <b>[voar</b>: ele abre as asas e ganha altura batendo as asas, com a sombra ficando no chão lá embaixo. No alto, você passa por cima de árvores, muros e rios, entre nuvens. Use <b>[voar</b> de novo para descer e pousar.</p>
+      <p>Ainda estamos ajustando detalhes, como as nuvens e o balanço no ar. Quando o dragão chegar ao jogo, este vídeo será trocado.</p>
     </>
   )
 }
