@@ -42,6 +42,11 @@ export default function TalentosPage({ staff = false }: { staff?: boolean }) {
   }, [todos, busca, caminho, vocacao, linha, status, tipo])
   // Nível 2 de todos primeiro: Talentos Gerais, depois os Comuns de cada caminho; "Fora das árvores" por último
   const peso = (c: string) => c === 'Talentos Gerais' ? 0 : c.startsWith('Comuns') ? 1 : c.startsWith('Fora') ? 3 : 2
+  const verCmd = q.get('ver') === 'comandos'
+  const nomeVoc = (id: string) => vocs.find(v => v.id === id)?.nome ?? id
+  const linhasCmd = useMemo(() => lista.filter(t => t.comandos.length)
+    .flatMap(t => t.comandos.map(c => ({ c, t })))
+    .sort((a, b) => a.c.localeCompare(b.c, 'pt-BR')), [lista])
   const grupos = Array.from(new Set(lista.map(t => t.caminho))).sort((a, b) => peso(a) - peso(b) || a.localeCompare(b, 'pt-BR'))
 
   return (
@@ -50,6 +55,10 @@ export default function TalentosPage({ staff = false }: { staff?: boolean }) {
         {staff ? 'Todos os talentos do jogo, por árvore de vocação e linha, com o estado de implantação (inclui os aposentados e os que estão fora das árvores).'
           : 'Todos os talentos que um personagem pode ter: no nível 2, os Comuns do caminho e os Gerais; do nível 4 ao 20, a árvore da vocação (e da linha escolhida no nível 4, quando a vocação tem linhas). Filtre pela sua vocação para ver só a sua árvore.'}
       </CabecalhoPagina>
+      <div className="linha" role="tablist" style={{ marginBottom: 12, gap: 8 }}>
+        <button type="button" role="tab" aria-selected={!verCmd} className={verCmd ? 'btn btn-2' : 'btn'} onClick={() => set('ver', '')}>Árvores de talentos</button>
+        <button type="button" role="tab" aria-selected={verCmd} className={verCmd ? 'btn' : 'btn btn-2'} onClick={() => set('ver', 'comandos')}>Comandos dos talentos</button>
+      </div>
       <div className="linha" style={{ marginBottom: 12 }}>
         <Busca valor={busca} mudar={setBusca} rotulo="Buscar talento" />
         <label className="campo" style={{ minWidth: 170 }}><span className="sr-only">Caminho</span>
@@ -87,6 +96,26 @@ export default function TalentosPage({ staff = false }: { staff?: boolean }) {
           </label>
         )}
       </div>
+      {verCmd ? (<>
+        <p className="discreto" aria-live="polite">{linhasCmd.length} comandos · digite no jogo (ou use o menu de comandos, aba Talentos){arq.gerado_em ? ` · gerado em ${arq.gerado_em}` : ''}</p>
+        <div className="tabela-envolve">
+          <table className="tabela">
+            <thead><tr><th style={{ textAlign: 'left' }}>Comando</th><th style={{ textAlign: 'left' }}>Talento</th><th style={{ textAlign: 'left' }}>Vocação</th><th>Nível</th><th style={{ textAlign: 'left' }}>O que faz</th></tr></thead>
+            <tbody>
+              {linhasCmd.map(({ c, t }) => (
+                <tr key={c + (t.id ?? t.nome)}>
+                  <td style={{ whiteSpace: 'nowrap' }}><code>{c}</code></td>
+                  <td><b style={{ color: 'var(--pergaminho)' }}>{t.nome}</b></td>
+                  <td>{t.caminho === 'Talentos Gerais' ? 'Geral (todas)' : (t.vocacoes ?? []).map(nomeVoc).join(', ') || t.caminho}{(t.linhas ?? []).length ? ' (linha)' : ''}</td>
+                  <td style={{ textAlign: 'center' }}>{t.nivel}</td>
+                  <td className="texto-2">{t.descricao}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {!linhasCmd.length && <div className="vazio">Nada encontrado.</div>}
+      </>) : <>
       <p className="discreto" aria-live="polite">{lista.length} talentos{arq.gerado_em ? ` · gerado em ${arq.gerado_em}` : ''}</p>
       {grupos.map(c => {
         const doc = lista.filter(t => t.caminho === c)
@@ -117,6 +146,7 @@ export default function TalentosPage({ staff = false }: { staff?: boolean }) {
         )
       })}
       {!lista.length && <div className="vazio">Nada encontrado.</div>}
+      </>}
     </div>
   )
 }

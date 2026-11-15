@@ -25,6 +25,7 @@ interface Dados { campos: string[]; folhas: string[]; origens: string[]; linhas:
 interface Entrada {
   id: number | string; o: string; n: string; st: string; ty: number; f: string; c: number; w: number; h: number
   a?: string; arq?: string; corpos?: number[]; x?: string; v?: number; an?: number; sexo?: string; solto?: number; cat: string
+  modo?: 'novo' | 'substituir'
 }
 
 const hex = (id: number | string, cat: string) => typeof id !== 'number' ? String(id)
@@ -34,7 +35,7 @@ const chave = (e: Entrada) => `${e.cat}|${e.o}|${e.arq ?? ''}|${e.id}|${e.f}|${e
 const ST: Record<string, string> = { n: 'novo', s: 'substitui vanilla', '?': 'sem comparação' }
 const ST_DICA: Record<string, string> = {
   n: 'Novo: não existe no jogo. Entra com um ID livre (se o ID estiver ocupado no Tybar, ganha outro e o ID final fica registrado).',
-  s: 'Substitui vanilla: já existe um item/animação original do UO com este ID e o desenho dele será TROCADO por este (afeta tudo no jogo que usa esse ID).',
+  s: 'Substitui vanilla: já existe um item/animação original do UO com este ID. Por padrão entra como NOVO (ID livre, o original fica intacto); só troca o desenho do original se você escolher "substituir o original".',
   '?': 'Sem comparação: arquivo solto, sem ID conhecido. Ainda não entra automaticamente.',
 }
 const TY = ['', 'já no Tybar', 'ID ocupado no Tybar']
@@ -87,7 +88,7 @@ export default function CatalogoCustomPage() {
   const [msgSel, setMsgSel] = useState<string | null>(null), [salvando, setSalvando] = useState(false)
   const sel = useMemo(() => {
     const n: Record<string, Marcada> = { ...salvas }
-    for (const [k, v] of Object.entries(mudancas)) { if (v) n[k] = n[k] || v; else delete n[k] }
+    for (const [k, v] of Object.entries(mudancas)) { if (v) n[k] = { ...(n[k] || {}), ...v } as Marcada; else delete n[k] }
     return n
   }, [salvas, mudancas])
   const nMud = Object.keys(mudancas).length
@@ -141,11 +142,23 @@ export default function CatalogoCustomPage() {
     if (!!salvas[k] === v) delete n[k]; else n[k] = v ? e : null
   }
   const alternar = (e: Entrada) => setMudancas(m => { const n = { ...m }; definir(n, e, !sel[chave(e)]); return n })
+  // substitui vanilla: padrao importar como novo; substituir o original so se a staff escolher
+  const mudarModo = (e: Entrada, modo: 'novo' | 'substituir') => setMudancas(m => ({ ...m, [chave(e)]: { ...e, ...(sel[chave(e)] || {}), modo } }))
+  const SeletorModo = ({ e }: { e: Entrada }) => {
+    const s = sel[chave(e)]
+    if (e.st !== 's' || !s) return null
+    return (
+      <select className="entrada" style={{ width: 'auto', fontSize: 11, padding: '1px 4px' }} value={s.modo || 'novo'}
+        onChange={ev => mudarModo(e, ev.target.value as 'novo' | 'substituir')} aria-label="Como importar">
+        <option value="novo">importar como novo</option><option value="substituir">substituir o original</option>
+      </select>
+    )
+  }
   const marcarPagina = (v: boolean) => setMudancas(m => { const n = { ...m }; pagina.forEach(e => definir(n, e, v)); return n })
 
   const lista = Object.values(sel).map(e => ({
     categoria: e.cat, id: typeof e.id === 'number' ? hex(e.id, e.cat) : e.id, id_decimal: typeof e.id === 'number' ? e.id : null,
-    origem: e.o, arquivo: e.arq ?? null, corpos: e.corpos ?? null, nome: e.n || '', status: ST[e.st] || e.st, tybar: TY[e.ty] || '',
+    origem: e.o, arquivo: e.arq ?? null, corpos: e.corpos ?? null, nome: e.n || '', status: ST[e.st] || e.st, modo: e.st === 's' ? (e.modo || 'novo') : '', tybar: TY[e.ty] || '',
   }))
   const textoExport = exportar === 'json' ? JSON.stringify(lista, null, 1)
     : ['categoria;id;id_decimal;origem;arquivo;corpos;nome;status;tybar', ...lista.map(l =>
@@ -167,7 +180,7 @@ export default function CatalogoCustomPage() {
         que importa sozinho o que foi marcado e ainda não foi importado.
         <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
           <li><strong>Novo</strong> = item/animação que não existe no jogo; entra com um ID livre (se o ID dele já estiver ocupado no Tybar, ganha outro e o ID final fica registrado).</li>
-          <li><strong>Substitui vanilla</strong> = já existe um item/animação original do UO com esse ID e o desenho dele será <strong>TROCADO</strong> por este. Afeta tudo no jogo que usa esse ID.</li>
+          <li><strong>Substitui vanilla</strong> = já existe um item/animação original do UO com esse ID. Ao marcar, entra por padrão como <strong>novo</strong> (ID livre, o original fica intacto). Para <strong>TROCAR</strong> o desenho do original (afeta tudo no jogo que usa o ID), escolha “substituir o original” no card e salve.</li>
           <li><strong>Já no Tybar</strong> = já temos; não precisa marcar.</li>
         </ul>
         <p className="discreto" style={{ margin: '6px 0 0' }}>Importação automática hoje: itens, gumps, paperdoll, cabelos/barbas e hues. Terrenos, animações, multis e “outros” podem ser marcados, mas ainda entram à mão (o Publicar avisa).</p>
@@ -222,6 +235,7 @@ export default function CatalogoCustomPage() {
                   {e.ty ? <> <span className="selo">{TY[e.ty]}</span></> : null}
                 </span>
                 <label style={{ fontSize: 12 }}><input type="checkbox" checked={m} onChange={() => alternar(e)} /> trazer{k in mudancas ? ' *' : ''}</label>
+                <SeletorModo e={e} />
                 {salvas[k]?.quem && <span className="discreto" style={{ fontSize: 10 }}>por {salvas[k].quem} {salvas[k].quando?.slice(0, 10)}</span>}
               </div>
             )
@@ -244,6 +258,7 @@ export default function CatalogoCustomPage() {
             <dt>Tamanho</dt><dd>{aberta.w}×{aberta.h}</dd>
             <dt>Situação</dt><dd>{ST[aberta.st] || aberta.st}{aberta.ty ? ` · ${TY[aberta.ty]}` : ''}<br /><span className="discreto">{ST_DICA[aberta.st]}</span></dd>
             {salvas[chave(aberta)]?.quem && <><dt>Marcado por</dt><dd>{salvas[chave(aberta)].quem} em {salvas[chave(aberta)].quando}</dd></>}
+            {aberta.st === 's' && sel[chave(aberta)] && <><dt>Importar</dt><dd><SeletorModo e={aberta} /></dd></>}
             {aberta.an !== undefined && <><dt>Animação</dt><dd>{aberta.an}{aberta.sexo ? ` (${aberta.sexo})` : ''}</dd></>}
             {aberta.x && <><dt>Obs.</dt><dd>{aberta.x}</dd></>}
           </dl>
