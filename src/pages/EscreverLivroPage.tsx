@@ -4,13 +4,13 @@ import { CabecalhoPagina, Carregando, Erro, Modal, useDados, useTitulo, dataBR }
 
 const SELO: Record<string, string> = { pendente: 'selo-pendente', aprovado: 'selo-ok', recusado: 'selo-mal' }
 
-// Pré-visualização do texto de uma página: <b> <i> <u> e [img](http/https link) (imagem até 250x200, no máximo 2).
+// Pré-visualização do texto de uma página: <b> <i> <u> e [img](http/https link) (imagem na largura da página, até 200 de altura, no máximo 2).
 // Qualquer outra tag aparece como texto comum. Igual ao que o jogo mostra.
 const MAX_IMAGENS = 2
 function Imagem({ url }: { url: string }) {
   const [falhou, setFalhou] = useState(false)
-  if (falhou) return <span className="discreto" style={{ display: 'block', margin: '6px auto', width: 250, border: '1px solid currentColor', textAlign: 'center', opacity: 0.6 }}>[imagem]</span>
-  return <img src={url} alt="" referrerPolicy="no-referrer" onError={() => setFalhou(true)} style={{ display: 'block', margin: '6px auto', maxWidth: 250, maxHeight: 200 }} />
+  if (falhou) return <span className="discreto" style={{ display: 'block', margin: '6px auto', width: '100%', border: '1px solid currentColor', textAlign: 'center', opacity: 0.6 }}>[imagem]</span>
+  return <img src={url} alt="" referrerPolicy="no-referrer" onError={() => setFalhou(true)} style={{ display: 'block', margin: '6px auto', maxWidth: '100%', maxHeight: 150 }} />
 }
 function PreviaPagina({ texto }: { texto: string }) {
   const re = /<(\/?)([biu])>|\[img\]\((https?:\/\/[^\s()<>[\]"'@]{4,200})\)/gi
@@ -73,7 +73,7 @@ function AjudaFormatacao() {
         <li>Se o link não carregar, aparece um quadro <code>[imagem]</code>.</li>
       </ul>
       <h3>3. Formatar imagens</h3>
-      <p>Não há escolha de tamanho, posição, alinhamento nem legenda: no jogo toda imagem aparece ajustada (cabe numa caixa de até 250x200), centralizada, no ponto onde você a colocou, e o texto continua abaixo dela. Para uma legenda, escreva uma linha de texto (por exemplo em <code>{'<i>'}</code>) logo depois da imagem.</p>
+      <p>Não há escolha de tamanho, posição, alinhamento nem legenda: no jogo toda imagem aparece ajustada (na largura da página, com até 200 de altura; encolhe, até uns 150, para sobrar espaço ao texto), centralizada, no ponto onde você a colocou, e o texto continua abaixo dela. Para uma legenda, escreva uma linha de texto (por exemplo em <code>{'<i>'}</code>) logo depois da imagem.</p>
     </details>
   )
 }
