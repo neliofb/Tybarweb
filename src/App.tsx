@@ -29,7 +29,6 @@ const MapaPage = lazy(() => import('./pages/MapaPage'))
 const FaunaStaffPage = lazy(() => import('./pages/staff/FaunaStaffPage'))
 const LootStaffPage = lazy(() => import('./pages/staff/LootStaffPage'))
 const ColetaStaffPage = lazy(() => import('./pages/staff/ColetaStaffPage'))
-const VrarkStaffPage = lazy(() => import('./pages/staff/VrarkStaffPage'))
 const CatalogoCustomPage = lazy(() => import('./pages/staff/CatalogoCustomPage'))
 const EsfolarStaffPage = lazy(() => import('./pages/staff/EsfolarStaffPage'))
 const MateriaisStaffPage = lazy(() => import('./pages/staff/MateriaisStaffPage'))
@@ -90,7 +89,6 @@ export default function App() {
             <Route path="staff/coleta" element={<SoStaff><ColetaStaffPage /></SoStaff>} />
             <Route path="staff/loot" element={<SoStaff><LootStaffPage /></SoStaff>} />
             <Route path="staff/esfolar" element={<SoStaff><EsfolarStaffPage /></SoStaff>} />
-            <Route path="staff/vrark" element={<SoStaff><VrarkStaffPage /></SoStaff>} />
             <Route path="staff/catalogo-custom" element={<SoStaff><CatalogoCustomPage /></SoStaff>} />
 
             {/* endereços antigos do portal */}
