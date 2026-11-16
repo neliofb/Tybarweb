@@ -311,6 +311,7 @@ export const MAX_LETRAS_PAGINA = 600
 export interface Livro {
   id: string; titulo: string; estado: 'pendente' | 'aprovado' | 'recusado'; modelo: number; tipo: string; autor: string; conta?: string
   criado: string; decididoPor?: string; decididoEm?: string; motivo?: string; paginas: string[]
+  /** edição de um livro já aprovado esperando nova aprovação */ revisao?: boolean; jaAprovado?: boolean
 }
 export interface Personagem { nome: string; serial: number; online?: boolean }
 export const getPersonagens = () => mapa(api.get<{ personagens?: Personagem[] }>('/api/sessao'), d => d.personagens ?? [])
@@ -318,6 +319,10 @@ export const getMeusLivros = () => api.get<Livro[]>('/api/livros/meus')
 export const enviarLivro = (b: { titulo: string; modelo: number; personagem: number; paginas: string[] }) => api.post('/api/livros', b)
 export const getLivrosStaff = () => api.get<Livro[]>('/api/staff/livros', { params: { estado: 'todos' } })
 export const aprovarLivro = (id: string) => api.post('/api/staff/livros/' + enc(id) + '/aprovar')
+export const editarLivro = (id: string, b: { titulo: string; paginas: string[] }) => api.post('/api/livros/' + enc(id) + '/editar', b)
+export const excluirLivro = (id: string) => api.post<{ ok: boolean; apagado: boolean }>('/api/livros/' + enc(id) + '/excluir')
+export const editarLivroStaff = (id: string, b: { titulo: string; paginas: string[] }) => api.post('/api/staff/livros/' + enc(id) + '/editar', b)
+export const excluirLivroStaff = (id: string) => api.post<{ ok: boolean; apagado: boolean }>('/api/staff/livros/' + enc(id) + '/excluir')
 export const recusarLivro = (id: string, motivo: string) => api.post('/api/staff/livros/' + enc(id) + '/recusar', { motivo })
 
 /** Mensagem de erro amigável a partir de um erro do axios ({error} no contrato; {problemas} ao salvar build) */

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { getMeusLivros, getPersonagens, enviarLivro, msgErro, TIPOS_LIVRO, MAX_TITULO_LIVRO, MAX_LETRAS_PAGINA, Personagem } from '../api/site'
-import { CabecalhoPagina, Carregando, Erro, useDados, useTitulo, dataBR } from '../components/ui'
+import { getMeusLivros, getPersonagens, enviarLivro, editarLivro, excluirLivro, msgErro, Livro, TIPOS_LIVRO, MAX_TITULO_LIVRO, MAX_LETRAS_PAGINA, Personagem } from '../api/site'
+import { CabecalhoPagina, Carregando, Erro, Modal, useDados, useTitulo, dataBR } from '../components/ui'
 
 const SELO: Record<string, string> = { pendente: 'selo-pendente', aprovado: 'selo-ok', recusado: 'selo-mal' }
 
@@ -88,6 +88,8 @@ export default function EscreverLivroPage() {
   const [paginas, setPaginas] = useState<string[]>([''])
   const [msg, setMsg] = useState<{ ok: boolean; t: string } | null>(null)
   const [enviando, setEnviando] = useState(false)
+  const [editando, setEditando] = useState<Livro | null>(null)
+  const [excluir, setExcluir] = useState<Livro | null>(null)
   const tipo = TIPOS_LIVRO.find(t => t.id === modelo)!
 
   useEffect(() => { getPersonagens().then(r => { setPers(r.data); if (r.data[0]) setPersonagem(r.data[0].serial) }).catch(() => {}) }, [])
@@ -98,10 +100,36 @@ export default function EscreverLivroPage() {
   async function enviar() {
     setMsg(null); setEnviando(true)
     try {
-      await enviarLivro({ titulo: titulo.trim(), modelo, personagem, paginas })
-      setMsg({ ok: true, t: 'Livro enviado! Ele aparece na biblioteca do jogo depois que a staff aprovar.' })
+      if (editando) {
+        await editarLivro(editando.id, { titulo: titulo.trim(), paginas })
+        setMsg({ ok: true, t: editando.estado === 'aprovado' || editando.jaAprovado
+          ? 'Edição enviada! O livro voltou para aprovação; as cópias no jogo seguem com o texto antigo até a staff aprovar.'
+          : 'Edição salva! O livro está esperando aprovação.' })
+        setEditando(null)
+      } else {
+        await enviarLivro({ titulo: titulo.trim(), modelo, personagem, paginas })
+        setMsg({ ok: true, t: 'Livro enviado! Ele aparece na biblioteca do jogo depois que a staff aprovar.' })
+      }
       setTitulo(''); setPaginas(['']); meus.carregar()
     } catch (e) { setMsg({ ok: false, t: msgErro(e) }) } finally { setEnviando(false) }
+  }
+
+  function comecarEdicao(l: Livro) {
+    setEditando(l); setMsg(null); setTitulo(l.titulo); setModelo(l.modelo)
+    const p = [...l.paginas]; while (p.length > 1 && !p[p.length - 1]) p.pop()
+    setPaginas(p.length ? p : [''])
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+  function cancelarEdicao() { setEditando(null); setTitulo(''); setPaginas(['']) }
+
+  async function confirmarExclusao() {
+    const l = excluir!; setExcluir(null); setMsg(null)
+    try {
+      const r = await excluirLivro(l.id)
+      setMsg({ ok: true, t: r.data.apagado ? `“${l.titulo}” foi apagado.` : `“${l.titulo}” saiu da biblioteca e do site.` })
+      if (editando?.id === l.id) cancelarEdicao()
+      meus.carregar()
+    } catch (e) { setMsg({ ok: false, t: msgErro(e) }) }
   }
 
   return (
@@ -110,16 +138,17 @@ export default function EscreverLivroPage() {
         Escreva um livro e envie. Depois que a staff aprovar, ele entra <b>lacrado</b> (sem edição) na janela <b>[biblioteca</b> do jogo, com o personagem escolhido como autor.
       </CabecalhoPagina>
       <div className="grade" style={{ gap: 14, maxWidth: 760 }}>
+        {editando && <div className="aviso" role="status">Editando <b>{editando.titulo}</b>.{(editando.estado === 'aprovado' || editando.jaAprovado) && ' Ao salvar, o livro volta para aprovação; as cópias no jogo continuam com o texto antigo até a staff aprovar de novo.'}</div>}
         <label className="campo"><span>Título ({titulo.length}/{MAX_TITULO_LIVRO})</span>
           <input className="entrada" value={titulo} maxLength={MAX_TITULO_LIVRO} onChange={e => setTitulo(e.target.value)} />
         </label>
         <label className="campo"><span>Tipo de livro</span>
-          <select className="entrada" value={modelo} onChange={e => mudarTipo(Number(e.target.value))}>
+          <select className="entrada" value={modelo} disabled={!!editando} onChange={e => mudarTipo(Number(e.target.value))}>
             {TIPOS_LIVRO.map(t => <option key={t.id} value={t.id}>{t.nome} (até {t.paginas} páginas)</option>)}
           </select>
         </label>
         <label className="campo"><span>Autor (personagem)</span>
-          <select className="entrada" value={personagem} onChange={e => setPersonagem(Number(e.target.value))}>
+          <select className="entrada" value={personagem} disabled={!!editando} onChange={e => setPersonagem(Number(e.target.value))}>
             {!pers.length && <option value={0}>Nenhum personagem na conta</option>}
             {pers.map(p => <option key={p.serial} value={p.serial}>{p.nome}</option>)}
           </select>
@@ -134,7 +163,8 @@ export default function EscreverLivroPage() {
         <div className="linha" style={{ gap: 8 }}>
           <button className="btn btn-2" disabled={paginas.length >= tipo.paginas} onClick={() => setPaginas(p => [...p, ''])}>Adicionar página ({paginas.length}/{tipo.paginas})</button>
           <button className="btn btn-2" disabled={paginas.length <= 1} onClick={() => setPaginas(p => p.slice(0, -1))}>Remover última</button>
-          <button className="btn" disabled={enviando || !titulo.trim() || !personagem} onClick={enviar}>Enviar para aprovação</button>
+          <button className="btn" disabled={enviando || !titulo.trim() || (!editando && !personagem)} onClick={enviar}>{editando ? 'Salvar edição' : 'Enviar para aprovação'}</button>
+          {editando && <button className="btn btn-2" onClick={cancelarEdicao}>Cancelar edição</button>}
         </div>
         {msg && <div className={'aviso ' + (msg.ok ? 'aviso-ok' : 'aviso-erro')} role="status">{msg.t}</div>}
       </div>
@@ -144,14 +174,26 @@ export default function EscreverLivroPage() {
       {meus.erro && <Erro erro={meus.erro} tentar={meus.carregar} />}
       {meus.dados && (meus.dados.length ? (
         <div className="tabela-envolve"><table className="tabela">
-          <thead><tr><th>Título</th><th>Tipo</th><th>Autor</th><th>Enviado em</th><th>Situação</th></tr></thead>
+          <thead><tr><th>Título</th><th>Tipo</th><th>Autor</th><th>Enviado em</th><th>Situação</th><th>Ações</th></tr></thead>
           <tbody>{meus.dados.map(l => (
             <tr key={l.id}>
               <td><b style={{ color: 'var(--pergaminho)' }}>{l.titulo}</b></td><td>{l.tipo}</td><td>{l.autor}</td><td>{dataBR(l.criado)}</td>
-              <td><span className={'selo ' + (SELO[l.estado] ?? 'selo-neutro')}>{l.estado}</span>{l.motivo && <div className="discreto">{l.motivo}</div>}</td>
+              <td><span className={'selo ' + (SELO[l.estado] ?? 'selo-neutro')}>{l.estado}</span>{l.revisao && <div className="discreto">edição esperando aprovação</div>}{l.motivo && <div className="discreto">{l.motivo}</div>}</td>
+              <td><div className="linha" style={{ gap: 6 }}>
+                <button className="btn btn-2 btn-p" onClick={() => comecarEdicao(l)}>Editar</button>
+                <button className="btn btn-perigo btn-p" onClick={() => setExcluir(l)}>Excluir</button>
+              </div></td>
             </tr>))}</tbody>
         </table></div>
       ) : <div className="vazio">Você ainda não enviou livros.</div>)}
+      <Modal titulo={`Excluir “${excluir?.titulo ?? ''}”?`} aberto={!!excluir} fechar={() => setExcluir(null)} acoes={<>
+        <button className="btn btn-2" onClick={() => setExcluir(null)}>Cancelar</button>
+        <button className="btn btn-perigo" onClick={confirmarExclusao}>Excluir</button>
+      </>}>
+        {excluir && (excluir.estado === 'aprovado' || excluir.jaAprovado)
+          ? <p>O livro sai da biblioteca do jogo e do site. As cópias que já estão com jogadores viram um livro com as páginas arrancadas. A staff guarda uma cópia e pode restaurar se você pedir.</p>
+          : <p>O livro ainda não foi aprovado e será apagado. A staff guarda uma cópia e pode restaurar se você pedir.</p>}
+      </Modal>
     </div>
   )
 }
