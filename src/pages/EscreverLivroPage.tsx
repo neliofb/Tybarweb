@@ -30,18 +30,50 @@ function PreviaPagina({ texto }: { texto: string }) {
   return <div className="entrada" style={{ whiteSpace: 'pre-wrap', minHeight: 40 }}>{nos}</div>
 }
 
+function Exemplo({ codigo, titulo }: { codigo: string; titulo: string }) {
+  return (
+    <div className="linha" style={{ gap: 12, alignItems: 'flex-start', flexWrap: 'wrap', margin: '8px 0' }}>
+      <div style={{ flex: '1 1 260px' }}>
+        <div className="discreto">{titulo} - você escreve:</div>
+        <pre className="entrada" style={{ whiteSpace: 'pre-wrap', margin: 0 }}><code>{codigo}</code></pre>
+      </div>
+      <div style={{ flex: '1 1 260px' }}>
+        <div className="discreto">Resultado:</div>
+        <PreviaPagina texto={codigo} />
+      </div>
+    </div>
+  )
+}
+
 function AjudaFormatacao() {
   return (
     <details className="aviso" style={{ maxWidth: 760 }}>
-      <summary><b>Formatação</b> (negrito, itálico e imagem)</summary>
-      <p>Escreva assim no texto da página:</p>
+      <summary><b>Como formatar</b> (tutorial: negrito, itálico, sublinhado, imagens)</summary>
+      <h3>1. Formatação do texto</h3>
+      <p>Cada página é uma caixa de texto. A formatação é feita com marcas escritas no próprio texto, sempre abrindo e fechando.</p>
+      <Exemplo titulo="Negrito" codigo={'Isto é <b>muito importante</b>.'} />
+      <Exemplo titulo="Itálico" codigo={'Ele sussurrou <i>não confie neles</i>.'} />
+      <Exemplo titulo="Sublinhado" codigo={'Encontre em <u>Britain</u>.'} />
+      <Exemplo titulo="Combinando" codigo={'<b><i>negrito e itálico</i></b> juntos'} />
+      <Exemplo titulo="Título (use negrito e uma linha em branco)" codigo={'<b><u>Capítulo I</u></b>\n\nEra uma vez...'} />
       <ul>
-        <li><code>{'<b>negrito</b>'}</code> para <b>negrito</b></li>
-        <li><code>{'<i>itálico</i>'}</code> para <i>itálico</i></li>
-        <li><code>{'<u>sublinhado</u>'}</code> para <u>sublinhado</u></li>
-        <li><code>[img](https://site.com/foto.png)</code> para uma imagem</li>
+        <li><b>Quebra de linha:</b> aperte Enter. Duas vezes deixa uma linha em branco (três ou mais viram duas).</li>
+        <li><b>Nova página:</b> use o botão <i>Adicionar página</i>. Cada caixa é uma página do livro (até {MAX_LETRAS_PAGINA} letras cada).</li>
+        <li>Marcas esquecidas abertas são fechadas sozinhas no fim da página, e as marcas não contam no limite de letras.</li>
+        <li>Qualquer outra marca (<code>{'<center>'}</code>, <code>{'<font>'}</code>, etc.) vira texto entre parênteses.</li>
       </ul>
-      <p className="discreto">A imagem fica pequena (cabe numa caixa de 120x90, no meio do texto) e precisa estar hospedada em algum site: use o link direto, terminando em .png, .jpg ou .gif. Até {MAX_IMAGENS} imagens por página. Outras tags são trocadas por parênteses, e as tags não contam no limite de letras.</p>
+      <p className="discreto"><b>Não existem:</b> cores, tamanhos de letra, títulos grandes, alinhamento (esquerda/centro/direita) e quebra de página dentro do texto.</p>
+      <h3>2. Inserir imagens</h3>
+      <p>Escreva o link da imagem entre <code>[img](</code> e <code>)</code>, no ponto do texto onde ela deve aparecer.</p>
+      <Exemplo titulo="Imagem" codigo={'Veja o mapa:\n[img](https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png)\nFim.'} />
+      <ul>
+        <li>O link precisa começar com <code>http://</code> ou <code>https://</code>, ter de 4 a 200 caracteres e não pode ter espaços, parênteses, colchetes, aspas ou @.</li>
+        <li>A imagem precisa estar hospedada em algum site (use o link direto da imagem, terminando em .png, .jpg ou .gif). <b>Não há upload no site</b> e não dá para usar número de gump ou arte do jogo.</li>
+        <li>Máximo de {MAX_IMAGENS} imagens por página; as demais são descartadas.</li>
+        <li>Se o link não carregar, aparece um quadro <code>[imagem]</code>.</li>
+      </ul>
+      <h3>3. Formatar imagens</h3>
+      <p>Não há escolha de tamanho, posição, alinhamento nem legenda: no jogo toda imagem aparece pequena (cabe numa caixa de 120x90), centralizada, no ponto onde você a colocou, e o texto continua abaixo dela. Para uma legenda, escreva uma linha de texto (por exemplo em <code>{'<i>'}</code>) logo depois da imagem.</p>
     </details>
   )
 }
