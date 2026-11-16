@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import semArteLista from './semArteNoPatch.json'
 import { Busca, CabecalhoPagina, Carregando, Erro, Modal, useTitulo } from '../../components/ui'
 
 // Catalogo de conteudo custom recebido de outros shards (staff). Os dados e as miniaturas NAO entram no build:
@@ -25,43 +26,28 @@ interface Dados { campos: string[]; folhas: string[]; origens: string[]; linhas:
 interface Entrada {
   id: number | string; o: string; n: string; st: string; ty: number; f: string; c: number; w: number; h: number
   a?: string; arq?: string; corpos?: number[]; x?: string; v?: number; an?: number; sexo?: string; solto?: number; cat: string
-  modo?: 'novo' | 'substituir'
 }
 
 const hex = (id: number | string, cat: string) => typeof id !== 'number' ? String(id)
   : (cat === 'hues' || ANIM.has(cat)) ? `${id}` : '0x' + id.toString(16).toUpperCase().padStart(4, '0')
 const ANIM = new Set(['monstros', 'montarias', 'roupas_anim'])
 const chave = (e: Entrada) => `${e.cat}|${e.o}|${e.arq ?? ''}|${e.id}|${e.f}|${e.c}`
+// vestiveis importados sem paperdoll proprio no patch (16/11/2026): retirados do jogo (Data/Tybar/CatalogoSemArte.txt)
+const SEM_ARTE = new Set<string>(semArteLista as string[])
 const ST: Record<string, string> = { n: 'novo', s: 'substitui vanilla', '?': 'sem comparação' }
 const ST_DICA: Record<string, string> = {
-  n: 'Novo: não existe no jogo. Entra com um ID livre (se o ID estiver ocupado no Tybar, ganha outro e o ID final fica registrado).',
-  s: 'Substitui vanilla: já existe um item/animação original do UO com este ID. Por padrão entra como NOVO (ID livre, o original fica intacto); só troca o desenho do original se você escolher "substituir o original".',
-  '?': 'Sem comparação: arquivo solto, sem ID conhecido. Ainda não entra automaticamente.',
+  n: 'Novo: não existia no UO vanilla.',
+  s: 'Substitui vanilla: o patch de origem redesenhou um ID original do UO.',
+  '?': 'Sem comparação: arquivo solto, sem ID conhecido.',
 }
 const TY = ['', 'já no Tybar', 'ID ocupado no Tybar']
 
-type Marcada = Entrada & { quem?: string; quando?: string }
-const API_SEL = BASE + '/api/selecao'
-function lerAntiga(): Record<string, Entrada> {
-  try { return JSON.parse(localStorage.getItem('catalogo-custom-sel') || '{}') } catch { return {} }
-}
 // Os arquivos do catalogo sao protegidos pelo Caddy: ele confere este cookie (copia do token do login) na mini-API da casa.
 function cookieDoLogin() {
   const t = localStorage.getItem('token')
   if (t) document.cookie = `tybar_cat=${encodeURIComponent(t)}; Path=/catalogo-custom; Max-Age=86400; SameSite=Strict${location.protocol === 'https:' ? '; Secure' : ''}`
 }
 cookieDoLogin()
-async function chamarSel(corpo?: unknown): Promise<Record<string, Marcada>> {
-  cookieDoLogin()
-  const t = localStorage.getItem('token')
-  const r = await fetch(API_SEL, {
-    method: corpo ? 'POST' : 'GET', credentials: 'same-origin',
-    headers: { ...(t ? { Authorization: `Bearer ${t}` } : {}), ...(corpo ? { 'Content-Type': 'application/json' } : {}) },
-    body: corpo ? JSON.stringify(corpo) : undefined,
-  })
-  if (!r.ok) throw new Error(r.status === 401 ? 'faça login de novo' : r.status === 403 ? 'só staff' : 'HTTP ' + r.status)
-  return ((await r.json()).itens || {}) as Record<string, Marcada>
-}
 
 function Miniatura({ e, zoom = 1 }: { e: Entrada; zoom?: number }) {
   const x = (e.c % COLS) * CEL, y = Math.floor(e.c / COLS) * CEL
@@ -80,33 +66,9 @@ export default function CatalogoCustomPage() {
   const [erro, setErro] = useState<string | null>(null)
   const [resumo, setResumo] = useState<Record<string, number>>({})
   const [busca, setBusca] = useState(''), [origem, setOrigem] = useState(''), [status, setStatus] = useState('')
-  const [tybar, setTybar] = useState('esconder'), [vest, setVest] = useState(false), [soMarc, setSoMarc] = useState(false)
+  const [tybar, setTybar] = useState('todos'), [vest, setVest] = useState(false), [soSemArte, setSoSemArte] = useState(false)
   const [pag, setPag] = useState(0)
-  // salvas: o que esta no servidor (todos da staff veem); mudancas: o que este navegador marcou/desmarcou e ainda nao salvou
-  const [salvas, setSalvas] = useState<Record<string, Marcada>>({})
-  const [mudancas, setMudancas] = useState<Record<string, Entrada | null>>(() => lerAntiga())
-  const [msgSel, setMsgSel] = useState<string | null>(null), [salvando, setSalvando] = useState(false)
-  const sel = useMemo(() => {
-    const n: Record<string, Marcada> = { ...salvas }
-    for (const [k, v] of Object.entries(mudancas)) { if (v) n[k] = { ...(n[k] || {}), ...v } as Marcada; else delete n[k] }
-    return n
-  }, [salvas, mudancas])
-  const nMud = Object.keys(mudancas).length
   const [aberta, setAberta] = useState<Entrada | null>(null)
-  const [exportar, setExportar] = useState<'json' | 'csv' | null>(null)
-
-  useEffect(() => { chamarSel().then(setSalvas).catch(e => setMsgSel('Não carregou a seleção salva (' + e.message + ').')) }, [])
-  const salvar = async () => {
-    setSalvando(true); setMsgSel(null)
-    const marcar = Object.entries(mudancas).filter(([, v]) => v).map(([k, v]) => ({ ...v, chave: k }))
-    const desmarcar = Object.entries(mudancas).filter(([, v]) => !v).map(([k]) => k)
-    try {
-      setSalvas(await chamarSel({ marcar, desmarcar })); setMudancas({})
-      try { localStorage.removeItem('catalogo-custom-sel') } catch { /* sem armazenamento */ }
-      setMsgSel('Salvo no servidor. Entra no jogo no próximo "Publicar Tybar".')
-    } catch (e) { setMsgSel('Não salvou: ' + (e as Error).message) }
-    setSalvando(false)
-  }
   useEffect(() => { fetch(`${BASE}/dados/resumo.json`).then(r => r.json()).then(setResumo).catch(() => {}) }, [])
   useEffect(() => {
     setDados(null); setErro(null); setPag(0)
@@ -119,7 +81,7 @@ export default function CatalogoCustomPage() {
       }))
     }).catch(e => setErro(`Não carregou ${BASE}/dados/${cat}.json (${e.message}). A pasta do catálogo está sendo servida?`))
   }, [cat])
-  useEffect(() => setPag(0), [busca, origem, status, tybar, vest, soMarc])
+  useEffect(() => setPag(0), [busca, origem, status, tybar, vest, soSemArte])
 
   const origens = useMemo(() => [...new Set((dados || []).map(e => e.o))].sort(), [dados])
   const visiveis = useMemo(() => {
@@ -129,45 +91,11 @@ export default function CatalogoCustomPage() {
     return dados.filter(e =>
       (!origem || e.o === origem) && (!status || e.st === status) &&
       (tybar === 'todos' || (tybar === 'esconder' ? e.ty !== 1 : e.ty === 1)) &&
-      (!vest || e.v) && (!soMarc || sel[chave(e)]) &&
+      (!vest || e.v) && (!soSemArte || SEM_ARTE.has(chave(e))) &&
       (!q || e.id === qn || (e.corpos || []).includes(qn) || hex(e.id, cat).toLowerCase().includes(q) || (e.n || '').toLowerCase().includes(q)))
-  }, [dados, busca, origem, status, tybar, vest, soMarc, sel, cat])
+  }, [dados, busca, origem, status, tybar, vest, soSemArte, cat])
   const paginas = Math.max(1, Math.ceil(visiveis.length / POR_PAGINA))
   const pagina = visiveis.slice(pag * POR_PAGINA, (pag + 1) * POR_PAGINA)
-  const nSel = Object.keys(sel).length
-
-  // marcar/desmarcar so mexe nas mudancas; se voltar ao estado salvo, a mudanca some
-  const definir = (n: Record<string, Entrada | null>, e: Entrada, v: boolean) => {
-    const k = chave(e)
-    if (!!salvas[k] === v) delete n[k]; else n[k] = v ? e : null
-  }
-  const alternar = (e: Entrada) => setMudancas(m => { const n = { ...m }; definir(n, e, !sel[chave(e)]); return n })
-  // substitui vanilla: padrao importar como novo; substituir o original so se a staff escolher
-  const mudarModo = (e: Entrada, modo: 'novo' | 'substituir') => setMudancas(m => ({ ...m, [chave(e)]: { ...e, ...(sel[chave(e)] || {}), modo } }))
-  const SeletorModo = ({ e }: { e: Entrada }) => {
-    const s = sel[chave(e)]
-    if (e.st !== 's' || !s) return null
-    return (
-      <select className="entrada" style={{ width: 'auto', fontSize: 11, padding: '1px 4px' }} value={s.modo || 'novo'}
-        onChange={ev => mudarModo(e, ev.target.value as 'novo' | 'substituir')} aria-label="Como importar">
-        <option value="novo">importar como novo</option><option value="substituir">substituir o original</option>
-      </select>
-    )
-  }
-  const marcarPagina = (v: boolean) => setMudancas(m => { const n = { ...m }; pagina.forEach(e => definir(n, e, v)); return n })
-
-  const lista = Object.values(sel).map(e => ({
-    categoria: e.cat, id: typeof e.id === 'number' ? hex(e.id, e.cat) : e.id, id_decimal: typeof e.id === 'number' ? e.id : null,
-    origem: e.o, arquivo: e.arq ?? null, corpos: e.corpos ?? null, nome: e.n || '', status: ST[e.st] || e.st, modo: e.st === 's' ? (e.modo || 'novo') : '', tybar: TY[e.ty] || '',
-  }))
-  const textoExport = exportar === 'json' ? JSON.stringify(lista, null, 1)
-    : ['categoria;id;id_decimal;origem;arquivo;corpos;nome;status;tybar', ...lista.map(l =>
-      [l.categoria, l.id, l.id_decimal ?? '', l.origem, l.arquivo ?? '', (l.corpos || []).join(' '), l.nome.replace(/;/g, ','), l.status, l.tybar].join(';'))].join('\n')
-  const baixar = () => {
-    const b = new Blob([textoExport], { type: exportar === 'json' ? 'application/json' : 'text/csv' })
-    const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'catalogo_custom_escolhidos.' + exportar; a.click()
-  }
-
   const info = CATS.find(c => c.id === cat)
   return (
     <div className="pagina">
@@ -175,20 +103,12 @@ export default function CatalogoCustomPage() {
         Arte de outros shards (só o que não é vanilla). Conteúdo de terceiros, alguns com licença que proíbe repassar: só para a staff, não divulgue.
       </CabecalhoPagina>
       <div className="painel painel-fino" style={{ margin: '8px 0', fontSize: 14 }}>
-        <strong>Como usar:</strong> 1) marque <em>trazer</em> no que vale a pena; 2) clique em <strong>Salvar no servidor</strong>
-        (a marcação fica com seu nome e a data, e toda a staff vê); 3) entra no jogo no próximo <strong>Publicar Tybar</strong> do dono,
-        que importa sozinho o que foi marcado e ainda não foi importado.
-        <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
-          <li><strong>Novo</strong> = item/animação que não existe no jogo; entra com um ID livre (se o ID dele já estiver ocupado no Tybar, ganha outro e o ID final fica registrado).</li>
-          <li><strong>Substitui vanilla</strong> = já existe um item/animação original do UO com esse ID. Ao marcar, entra por padrão como <strong>novo</strong> (ID livre, o original fica intacto). Para <strong>TROCAR</strong> o desenho do original (afeta tudo no jogo que usa o ID), escolha “substituir o original” no card e salve.</li>
-          <li><strong>Já no Tybar</strong> = já temos; não precisa marcar.</li>
-        </ul>
-        <p className="discreto" style={{ margin: '6px 0 0' }}>Importação automática hoje: itens, gumps, paperdoll, cabelos/barbas e hues. Terrenos, animações, multis e “outros” podem ser marcados, mas ainda entram à mão (o Publicar avisa).</p>
+        <strong>Só consulta:</strong> os itens bons dos patches já foram inseridos direto no jogo (painel <code>[itenscatalogo</code>). A seleção/importação pelo site foi encerrada em 16/11/2026.
       </div>
       <nav className="linha" style={{ gap: 6, flexWrap: 'wrap', margin: '8px 0' }} aria-label="Categorias">
         {CATS.map(c => (
           <button key={c.id} className={'btn btn-2' + (c.id === cat ? '' : ' btn-p')} aria-current={c.id === cat ? 'page' : undefined}
-            onClick={() => { setParams({ cat: c.id }); setSoMarc(false) }}>
+            onClick={() => setParams({ cat: c.id })}>
             {c.nome}{resumo[c.id] !== undefined ? ` (${resumo[c.id].toLocaleString('pt-BR')})` : ''}
           </button>
         ))}
@@ -206,25 +126,16 @@ export default function CatalogoCustomPage() {
           <option value="esconder">Esconder o que já está no Tybar</option><option value="todos">Mostrar tudo</option><option value="so">Só o que já está no Tybar</option>
         </select>
         {cat === 'itens' && <label><input type="checkbox" checked={vest} onChange={e => setVest(e.target.checked)} /> só vestíveis</label>}
-        <label><input type="checkbox" checked={soMarc} onChange={e => setSoMarc(e.target.checked)} /> só marcados</label>
-      </div>
-      <div className="linha" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 10 }}>
-        <span className="discreto">{visiveis.length.toLocaleString('pt-BR')} nesta categoria · {nSel} marcados no total</span>
-        <button className="btn" disabled={!nMud || salvando} onClick={salvar}>{salvando ? 'Salvando…' : `Salvar no servidor${nMud ? ` (${nMud} alteraç${nMud === 1 ? 'ão' : 'ões'})` : ''}`}</button>
-        {nMud > 0 && <button className="btn btn-2 btn-p" onClick={() => setMudancas({})}>Desfazer alterações</button>}
-        {msgSel && <span role="status" style={{ fontSize: 13 }}>{msgSel}</span>}
-        <button className="btn btn-2 btn-p" onClick={() => marcarPagina(true)}>Marcar página</button>
-        <button className="btn btn-2 btn-p" onClick={() => marcarPagina(false)}>Desmarcar página</button>
-        <button className="btn btn-2" disabled={!nSel} onClick={() => setExportar('json')}>Exportar JSON</button>
-        <button className="btn btn-2" disabled={!nSel} onClick={() => setExportar('csv')}>Exportar CSV</button>
+        {cat === 'itens' && <label title="Vestíveis importados que não têm paperdoll próprio no patch: retirados do jogo"><input type="checkbox" checked={soSemArte} onChange={e => { setSoSemArte(e.target.checked); if (e.target.checked) setTybar('todos') }} /> só “sem arte no patch” ({SEM_ARTE.size})</label>}
+        <span className="discreto">{visiveis.length.toLocaleString('pt-BR')} nesta categoria</span>
       </div>
       {erro ? <Erro erro={erro} tentar={() => setParams({ cat })} /> : !dados ? <Carregando /> : (<>
         <Paginas pag={pag} total={paginas} mudar={setPag} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 8 }}>
           {pagina.map(e => {
-            const k = chave(e), m = !!sel[k]
+            const k = chave(e)
             return (
-              <div key={k} className="painel painel-fino" style={{ padding: 6, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textAlign: 'center', outline: m ? '2px solid var(--ouro, #c9a227)' : 'none' }}>
+              <div key={k} className="painel painel-fino" style={{ padding: 6, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textAlign: 'center' }}>
                 <button onClick={() => setAberta(e)} title="Ampliar" style={{ background: 'none', border: 0, padding: 0, cursor: 'zoom-in' }}><Miniatura e={e} /></button>
                 <strong style={{ fontSize: 13 }}>{hex(e.id, cat)}{e.arq ? <span className="discreto"> · {e.arq}</span> : null}</strong>
                 {e.corpos && e.corpos.length > 0 && <span className="discreto" style={{ fontSize: 11 }}>corpo {e.corpos.slice(0, 3).join(', ')}</span>}
@@ -234,9 +145,7 @@ export default function CatalogoCustomPage() {
                   <span className={'selo ' + (e.st === 's' ? 'selo-pendente' : '')} title={ST_DICA[e.st]}>{ST[e.st] || e.st}</span>
                   {e.ty ? <> <span className="selo">{TY[e.ty]}</span></> : null}
                 </span>
-                <label style={{ fontSize: 12 }}><input type="checkbox" checked={m} onChange={() => alternar(e)} /> trazer{k in mudancas ? ' *' : ''}</label>
-                <SeletorModo e={e} />
-                {salvas[k]?.quem && <span className="discreto" style={{ fontSize: 10 }}>por {salvas[k].quem} {salvas[k].quando?.slice(0, 10)}</span>}
+                {SEM_ARTE.has(k) && <span className="selo" title="Vestível sem paperdoll próprio no patch: retirado do jogo (não é mais criado)" style={{ fontSize: 11, background: '#b3261e', color: '#fff' }}>sem arte no patch</span>}
               </div>
             )
           })}
@@ -244,8 +153,7 @@ export default function CatalogoCustomPage() {
         <Paginas pag={pag} total={paginas} mudar={setPag} />
       </>)}
       {aberta && (
-        <Modal titulo={`${info?.nome} ${hex(aberta.id, cat)}`} aberto fechar={() => setAberta(null)}
-          acoes={<button className="btn" onClick={() => { alternar(aberta) }}>{sel[chave(aberta)] ? 'Desmarcar' : 'Marcar para trazer'}</button>}>
+        <Modal titulo={`${info?.nome} ${hex(aberta.id, cat)}`} aberto fechar={() => setAberta(null)}>
           <div className="linha" style={{ gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
             <Miniatura e={aberta} zoom={3} />
             {aberta.a && <img src={`${BASE}/${aberta.a}`} alt="andando" style={{ imageRendering: 'pixelated', minWidth: 160, background: 'rgba(0,0,0,.25)', borderRadius: 4 }} />}
@@ -256,21 +164,10 @@ export default function CatalogoCustomPage() {
             {aberta.corpos && <><dt>Corpos</dt><dd>{aberta.corpos.join(', ') || '—'}</dd></>}
             {aberta.n && <><dt>Nome/nota</dt><dd>{aberta.n}</dd></>}
             <dt>Tamanho</dt><dd>{aberta.w}×{aberta.h}</dd>
-            <dt>Situação</dt><dd>{ST[aberta.st] || aberta.st}{aberta.ty ? ` · ${TY[aberta.ty]}` : ''}<br /><span className="discreto">{ST_DICA[aberta.st]}</span></dd>
-            {salvas[chave(aberta)]?.quem && <><dt>Marcado por</dt><dd>{salvas[chave(aberta)].quem} em {salvas[chave(aberta)].quando}</dd></>}
-            {aberta.st === 's' && sel[chave(aberta)] && <><dt>Importar</dt><dd><SeletorModo e={aberta} /></dd></>}
+            <dt>Situação</dt><dd>{SEM_ARTE.has(chave(aberta)) && <><strong style={{ color: '#d93025' }}>Sem arte no patch: retirado do jogo.</strong><br /></>}{ST[aberta.st] || aberta.st}{aberta.ty ? ` · ${TY[aberta.ty]}` : ''}<br /><span className="discreto">{ST_DICA[aberta.st]}</span></dd>
             {aberta.an !== undefined && <><dt>Animação</dt><dd>{aberta.an}{aberta.sexo ? ` (${aberta.sexo})` : ''}</dd></>}
             {aberta.x && <><dt>Obs.</dt><dd>{aberta.x}</dd></>}
           </dl>
-        </Modal>
-      )}
-      {exportar && (
-        <Modal titulo={`Exportar ${nSel} escolhidos (${exportar.toUpperCase()})`} aberto fechar={() => setExportar(null)}
-          acoes={<>
-            <button className="btn btn-2" onClick={() => navigator.clipboard?.writeText(textoExport)}>Copiar</button>
-            <button className="btn" onClick={baixar}>Baixar arquivo</button>
-          </>}>
-          <textarea className="entrada" readOnly value={textoExport} style={{ width: '100%', height: 320, fontFamily: 'monospace', fontSize: 12 }} />
         </Modal>
       )}
     </div>
