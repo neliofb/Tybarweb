@@ -150,6 +150,26 @@ function TopicoCarrocaCharrete() {
   )
 }
 
+function TopicoClero() {
+  return (
+    <>
+      <p>Clérigos e paladinos do <b>Clero de Zharkia</b> têm agora dois ofícios no templo e no cemitério da capital.</p>
+      <h3>Culto do Templo</h3>
+      <video controls preload="metadata" poster="/videos/clero_culto.jpg" style={{ width: '100%', maxWidth: 1000, display: 'block', borderRadius: 6, background: '#000', aspectRatio: '16/9' }}>
+        <source src="/videos/clero_culto.mp4" type="video/mp4" />
+      </video>
+      <p>No Grande Templo de Zharkia, o acólito sobe ao <b>púlpito</b> e escolhe o deus da pregação: Zanshir, Hyvitorn, Asan, Rothen ou Khumar. Os <b>fiéis entram e se sentam nos bancos</b>, cada um deixando uma moeda de cobre. A pregação tem cinco atos (Abertura, Leitura, Testemunho, Oferta e Bênção), com a lore dos deuses em pílulas, e os fiéis respondem do jeito que só um culto animado sabe responder. No fim, alguns pedem <b>confissão</b>.</p>
+      <p>Quanto maior a <b>reputação no Clero</b>, mais o templo enche, até ter gente em pé na porta. Um culto a cada 12 horas do jogo.</p>
+      <h3>Vigília dos Mortos</h3>
+      <video controls preload="metadata" poster="/videos/clero_embalsamento.jpg" style={{ width: '100%', maxWidth: 1000, display: 'block', borderRadius: 6, background: '#000', aspectRatio: '16/9' }}>
+        <source src="/videos/clero_embalsamento.mp4" type="video/mp4" />
+      </video>
+      <p>Na sala mortuária ao lado do cemitério chegam <b>três corpos</b> a cada 12 horas do jogo, e <b>um deles está possuído</b> pelo Mesum. É preciso preparar os mortos (lavar, fechar os olhos, embalsamar, vestir a mortalha e rezar), buscando os materiais na estante, <b>um de cada vez</b>.</p>
+      <p>O possuído se trai: o braço escorrega, a vela apaga, ele sorri quando você volta. Mas os inocentes também enganam. <b>Três sinais</b> se escondem entre as lápides do cemitério e só se revelam a quem chega perto. Marque os sinais certos entre cinquenta, leve o corpo à <b>cova aberta</b> e enterre. Se errar, <b>o morto levanta</b>.</p>
+    </>
+  )
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TopicoDragaoVoador() {
   return (
@@ -170,6 +190,7 @@ const TOPICOS: { id: string; titulo: string; Corpo: () => JSX.Element }[] = [
   { id: 'construcao', titulo: 'Construção (Mansory)', Corpo: TopicoConstrucao },
   { id: 'missoes', titulo: 'Missões para workers', Corpo: TopicoMissoesWorkers },
   { id: 'carroca', titulo: 'Carroça e charrete', Corpo: TopicoCarrocaCharrete },
+  { id: 'clero', titulo: 'Clero: culto e vigília', Corpo: TopicoClero },
 ]
 
 export default function FeaturesPage() {
